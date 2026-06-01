@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import {
+  accessLabels,
   categoryLabels,
   marketLabels,
   priorityLabels,
@@ -79,6 +80,11 @@ export function CommandPalette({
           site.noteZh,
           ...site.tags,
           ...(site.aliases ?? []),
+          ...(site.access ?? []),
+          ...(site.access ?? []).flatMap((access) => [
+            accessLabels[access].en,
+            accessLabels[access].zh,
+          ]),
         ]
           .filter(Boolean)
           .join(' ')

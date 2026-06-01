@@ -183,6 +183,7 @@ Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要�
 - Bilingual UI: English and 中文.
 - Search across English names, Chinese names, descriptions, categories, tags, and notes.
 - Command Palette opens with `Cmd+K` / `Ctrl+K` to search sites and workflows from anywhere in the app.
+- Access Tags show manual access hints such as Mainland CN, Global, Proxy likely, Login, Paid, Institutional, and Free.
 - Guest favorites persist in `localStorage`.
 - Optional Supabase Auth + database sync gives each signed-in user a private favorites list.
 - Pin Board gives the home page a compact quick-launch area for the user's most-used websites.
@@ -212,6 +213,7 @@ src/
     supabaseClient.ts
   components/
     AuthBar.tsx
+    AccessFilter.tsx
     CategoryFilter.tsx
     CommandPalette.tsx
     MarketTabs.tsx
@@ -262,11 +264,26 @@ Because local favorites use browser `localStorage`, favorites do not sync across
 Press `Cmd+K` on macOS or `Ctrl+K` on Windows/Linux to open the Command Palette.
 
 - Search websites and workflows in one place.
+- Access tags are searchable, so queries such as `国内可用`, `proxy`, or `paid` can find matching websites.
 - Press `Enter` on a site result to open that website.
 - Press `Enter` on a workflow result to filter the main website list to that workflow's sites.
 - Workflow results include an explicit `Open all` / `打开全部` button for intentionally opening every website in the workflow.
 - Aliases make short commands work, such as `dfcf` for 东方财富, `cninfo` for 巨潮资讯, `tv` for TradingView, and `fred` for FRED.
 - The palette is front-end only and does not open local folders, local projects, or run shell commands.
+
+## Access Tags
+
+Each site may include manual access hints:
+
+- `国内可用` / `Mainland CN`
+- `海外可用` / `Global`
+- `可能需要代理` / `Proxy likely`
+- `需要登录` / `Login`
+- `付费终端` / `Paid`
+- `机构权限` / `Institutional`
+- `免费可用` / `Free`
+
+These tags are manually curated notes, not real-time network checks. Quant Navigator does not automatically ping websites, probe availability, or test login/paywall state. This avoids CORS issues, regional network false positives, and misleading results from temporary connectivity differences.
 
 ### Multi-User Favorites
 
@@ -365,6 +382,7 @@ Open `src/data/sites.ts` and add a `Site` object:
   category: 'Market Data / 行情数据',
   tags: ['行情', '数据', 'api'],
   aliases: ['example', 'data'],
+  access: ['国内可用', '免费可用'],
   priority: 'useful',
   noteZh: '说明它在投研工作流里的具体用途。'
 }

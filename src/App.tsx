@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { AccessFilter, type AccessFilterValue } from './components/AccessFilter';
 import { AuthBar } from './components/AuthBar';
 import { CategoryFilter } from './components/CategoryFilter';
 import { CommandPalette } from './components/CommandPalette';
@@ -10,7 +11,10 @@ import { SearchBar } from './components/SearchBar';
 import { SiteCard } from './components/SiteCard';
 import {
   allMarket,
+  allAccess,
+  accessLabels,
   categoryLabels,
+  type AccessTag,
   type Category,
   type Language,
   type MarketFilter,
@@ -49,6 +53,7 @@ function App() {
   const [query, setQuery] = useState('');
   const [selectedMarket, setSelectedMarket] = useState<MarketFilter>(allMarket);
   const [selectedCategory, setSelectedCategory] = useState<'All' | Category>(allCategory);
+  const [selectedAccess, setSelectedAccess] = useState<AccessFilterValue>(allAccess);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [workflowSiteFilter, setWorkflowSiteFilter] = useState<WorkflowSiteFilter | null>(null);
   const [language, setLanguage] = useState<Language>(() => getInitialLanguage());
@@ -73,6 +78,7 @@ function App() {
       .filter((site) => !workflowSiteFilter || workflowSiteFilter.siteIds.has(site.id))
       .filter((site) => selectedMarket === allMarket || site.market === selectedMarket)
       .filter((site) => selectedCategory === allCategory || site.category === selectedCategory)
+      .filter((site) => selectedAccess === allAccess || site.access?.includes(selectedAccess as AccessTag))
       .filter((site) => !showFavoritesOnly || favorites.favoriteIds.has(site.id))
       .filter((site) => {
         if (!normalizedQuery) {
@@ -92,6 +98,11 @@ function App() {
           site.noteZh,
           ...site.tags,
           ...(site.aliases ?? []),
+          ...(site.access ?? []),
+          ...(site.access ?? []).flatMap((access) => [
+            accessLabels[access].en,
+            accessLabels[access].zh,
+          ]),
         ]
           .filter(Boolean)
           .join(' ')
@@ -135,6 +146,7 @@ function App() {
     language,
     query,
     selectedCategory,
+    selectedAccess,
     selectedMarket,
     showFavoritesOnly,
     workflowSiteFilter,
@@ -143,6 +155,7 @@ function App() {
   const hasActiveFilters =
     query.trim().length > 0 ||
     selectedCategory !== allCategory ||
+    selectedAccess !== allAccess ||
     selectedMarket !== allMarket ||
     showFavoritesOnly ||
     Boolean(workflowSiteFilter);
@@ -157,6 +170,7 @@ function App() {
     setQuery('');
     setSelectedMarket(allMarket);
     setSelectedCategory(allCategory);
+    setSelectedAccess(allAccess);
     setShowFavoritesOnly(false);
   };
 
@@ -164,6 +178,7 @@ function App() {
     setQuery('');
     setSelectedMarket(allMarket);
     setSelectedCategory(allCategory);
+    setSelectedAccess(allAccess);
     setShowFavoritesOnly(false);
     setWorkflowSiteFilter(null);
   };
@@ -235,6 +250,11 @@ function App() {
             <CategoryFilter
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
+              language={language}
+            />
+            <AccessFilter
+              selectedAccess={selectedAccess}
+              onSelectAccess={setSelectedAccess}
               language={language}
             />
           </div>

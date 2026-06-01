@@ -6,6 +6,15 @@ export type MarketFilter = '全部' | Market;
 
 export type Priority = 'core' | 'useful' | 'optional';
 
+export type AccessTag =
+  | '国内可用'
+  | '海外可用'
+  | '可能需要代理'
+  | '需要登录'
+  | '付费终端'
+  | '机构权限'
+  | '免费可用';
+
 export type Category =
   | 'Market Data / 行情数据'
   | 'Research Papers / 学术研究'
@@ -22,7 +31,19 @@ export type Category =
 
 export const allMarket: MarketFilter = '全部';
 
+export const allAccess = '全部访问条件';
+
 export const markets: MarketFilter[] = ['全部', 'A股', '美股', '港股', '加密', '通用工具'];
+
+export const accessTags: AccessTag[] = [
+  '国内可用',
+  '海外可用',
+  '可能需要代理',
+  '需要登录',
+  '付费终端',
+  '机构权限',
+  '免费可用',
+];
 
 export const categories: Category[] = [
   'Market Data / 行情数据',
@@ -67,4 +88,14 @@ export const priorityLabels: Record<Priority, { en: string; zh: string }> = {
   core: { en: 'Core', zh: '核心' },
   useful: { en: 'Useful', zh: '常用' },
   optional: { en: 'Optional', zh: '备选' },
+};
+
+export const accessLabels: Record<AccessTag, { en: string; zh: string }> = {
+  国内可用: { en: 'Mainland CN', zh: '国内可用' },
+  海外可用: { en: 'Global', zh: '海外可用' },
+  可能需要代理: { en: 'Proxy likely', zh: '可能需要代理' },
+  需要登录: { en: 'Login', zh: '需要登录' },
+  付费终端: { en: 'Paid', zh: '付费终端' },
+  机构权限: { en: 'Institutional', zh: '机构权限' },
+  免费可用: { en: 'Free', zh: '免费可用' },
 };

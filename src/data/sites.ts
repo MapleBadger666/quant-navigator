@@ -1,4 +1,4 @@
-import type { Category, Market, Priority } from './markets';
+import type { AccessTag, Category, Market, Priority } from './markets';
 
 export type Site = {
   id: string;
@@ -11,6 +11,7 @@ export type Site = {
   category: Category;
   tags: string[];
   aliases?: string[];
+  access?: AccessTag[];
   priority: Priority;
   note?: string;
   noteZh?: string;
@@ -28,6 +29,7 @@ export const sites: Site[] = [
     category: 'Market Data / 行情数据',
     tags: ['quotes', 'stocks', 'earnings', 'watchlists', '美股行情'],
     aliases: ['yf', 'yahoo'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -40,6 +42,7 @@ export const sites: Site[] = [
     category: 'Market Data / 行情数据',
     tags: ['charts', 'technical analysis', 'alerts', 'screeners', '图表'],
     aliases: ['tv', 'tradingview'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -51,6 +54,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Data Vendor / 数据供应商',
     tags: ['datasets', 'api', 'alternative data', 'macro', '数据'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'useful',
   },
   {
@@ -63,6 +67,7 @@ export const sites: Site[] = [
     category: 'Market Data / 行情数据',
     tags: ['macro', 'rates', 'inflation', 'economic data', '宏观'],
     aliases: ['fred', 'macro'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -74,6 +79,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Market Data / 行情数据',
     tags: ['global markets', 'calendar', 'commodities', 'forex', '全球市场'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -85,6 +91,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'News & Macro / 新闻宏观',
     tags: ['news', 'quotes', 'portfolio', 'markets', '新闻'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'useful',
   },
   {
@@ -97,6 +104,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Research Papers / 学术研究',
     tags: ['preprints', 'q-fin', 'risk', 'derivatives', '论文'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -108,6 +116,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Research Papers / 学术研究',
     tags: ['working papers', 'finance', 'economics', 'research', '论文'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -120,6 +129,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Research Papers / 学术研究',
     tags: ['citations', 'authors', 'academic search', 'papers', '学术搜索'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -131,6 +141,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Research Papers / 学术研究',
     tags: ['economics', 'working papers', 'macro', 'datasets', '经济研究'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -142,6 +153,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Research Papers / 学术研究',
     tags: ['journal', 'asset pricing', 'corporate finance', 'peer reviewed', '期刊'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -153,6 +165,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Factor Research / 因子研究',
     tags: ['factors', 'asset allocation', 'portfolio', 'whitepapers', '因子'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -164,6 +177,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Factor Research / 因子研究',
     tags: ['quant investing', 'factors', 'sustainability', 'research', '量化投资'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -175,6 +189,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Backtesting / 回测平台',
     tags: ['algorithmic trading', 'cloud', 'lean', 'live trading', '回测'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'core',
   },
   {
@@ -186,6 +201,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Backtesting / 回测平台',
     tags: ['python', 'strategies', 'optimization', 'framework', '回测'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -197,6 +213,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Backtesting / 回测平台',
     tags: ['python', 'event driven', 'backtest', 'research', '回测'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -208,6 +225,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Backtesting / 回测平台',
     tags: ['python', 'vectorized', 'portfolio', 'analytics', '回测'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -219,6 +237,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Backtesting / 回测平台',
     tags: ['portfolio', 'factor analysis', 'optimization', 'monte carlo', '组合'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -230,6 +249,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Backtesting / 回测平台',
     tags: ['python', 'optimization', 'risk model', 'allocation', '组合优化'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -242,6 +262,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Broker / Trading / 券商交易',
     tags: ['broker', 'api', 'global markets', 'execution', '券商'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'core',
   },
   {
@@ -253,6 +274,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Broker / Trading / 券商交易',
     tags: ['api', 'broker', 'paper trading', 'developer', '交易'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'useful',
   },
   {
@@ -264,6 +286,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Broker / Trading / 券商交易',
     tags: ['options', 'broker', 'api', 'market data', '期权'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'useful',
   },
   {
@@ -276,6 +299,7 @@ export const sites: Site[] = [
     market: '加密',
     category: 'Broker / Trading / 券商交易',
     tags: ['crypto', 'exchange', 'api', 'derivatives', '交易所'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'core',
   },
   {
@@ -287,6 +311,7 @@ export const sites: Site[] = [
     market: '加密',
     category: 'Broker / Trading / 券商交易',
     tags: ['crypto', 'exchange', 'api', 'execution', '交易'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'core',
   },
   {
@@ -299,6 +324,7 @@ export const sites: Site[] = [
     category: 'Broker / Trading / 券商交易',
     tags: ['order book', 'liquidity', 'heatmap', 'execution', '盘口'],
     aliases: ['bookmap', 'orderflow'],
+    access: ['海外可用', '可能需要代理', '需要登录', '付费终端'],
     priority: 'useful',
   },
   {
@@ -311,6 +337,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'News & Macro / 新闻宏观',
     tags: ['news', 'macro', 'markets', 'terminal', '宏观'],
+    access: ['海外可用', '可能需要代理', '需要登录', '付费终端'],
     priority: 'core',
   },
   {
@@ -323,6 +350,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'News & Macro / 新闻宏观',
     tags: ['news', 'global markets', 'economy', 'business', '新闻'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'core',
   },
   {
@@ -334,6 +362,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'News & Macro / 新闻宏观',
     tags: ['news', 'tv', 'stocks', 'live updates', '美股新闻'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'useful',
   },
   {
@@ -346,6 +375,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'News & Macro / 新闻宏观',
     tags: ['analysis', 'markets', 'macro', 'global finance', '分析'],
+    access: ['海外可用', '可能需要代理', '需要登录', '付费终端'],
     priority: 'useful',
   },
   {
@@ -358,6 +388,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'News & Macro / 新闻宏观',
     tags: ['news', 'markets', 'business', 'analysis', '财经新闻'],
+    access: ['海外可用', '可能需要代理', '需要登录', '付费终端'],
     priority: 'useful',
   },
   {
@@ -369,6 +400,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'News & Macro / 新闻宏观',
     tags: ['macro', 'commentary', 'markets', 'alternative news', '观点'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'optional',
   },
   {
@@ -381,6 +413,7 @@ export const sites: Site[] = [
     category: 'Filings / 公告披露',
     tags: ['filings', '10-k', '10-q', 'disclosures', '公告'],
     aliases: ['sec', 'edgar', 'filings'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -392,6 +425,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Filings / 公告披露',
     tags: ['company search', 'filings', 'regulatory', 'disclosures', 'SEC'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -403,6 +437,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Filings / 公告披露',
     tags: ['filings', 'search', 'financial statements', 'documents', '财报'],
+    access: ['海外可用', '可能需要代理', '需要登录', '付费终端'],
     priority: 'useful',
   },
   {
@@ -414,6 +449,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Filings / 公告披露',
     tags: ['insider trading', 'form 4', 'screening', 'signals', '内部人'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -425,6 +461,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Filings / 公告披露',
     tags: ['13f', 'funds', 'holdings', 'institutional', '机构持仓'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -436,6 +473,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Filings / 公告披露',
     tags: ['superinvestors', '13f', 'portfolios', 'value investing', '持仓'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'optional',
   },
   {
@@ -447,6 +485,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Factor Research / 因子研究',
     tags: ['factors', 'fama french', 'returns', 'datasets', '因子'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -458,6 +497,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Factor Research / 因子研究',
     tags: ['factors', 'style premia', 'datasets', 'research', '数据集'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -469,6 +509,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Factor Research / 因子研究',
     tags: ['factor indexes', 'methodology', 'smart beta', 'msci', '指数'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -480,6 +521,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Factor Research / 因子研究',
     tags: ['factors', 'value', 'momentum', 'research', '价值'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -491,6 +533,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Factor Research / 因子研究',
     tags: ['strategies', 'factors', 'research library', 'alpha', '策略库'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'useful',
   },
   {
@@ -502,6 +545,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Factor Research / 因子研究',
     tags: ['screening', 'ranking', 'factor testing', 'simulation', '选股'],
+    access: ['海外可用', '可能需要代理', '需要登录', '付费终端'],
     priority: 'useful',
   },
   {
@@ -513,6 +557,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'AI / ML for Finance / 金融AI',
     tags: ['machine learning', 'benchmarks', 'datasets', 'code', '机器学习'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -524,6 +569,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'AI / ML for Finance / 金融AI',
     tags: ['models', 'datasets', 'nlp', 'deployment', '模型'],
+    access: ['海外可用', '可能需要代理'],
     priority: 'core',
   },
   {
@@ -535,6 +581,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'AI / ML for Finance / 金融AI',
     tags: ['llm', 'api', 'agents', 'automation', '大模型'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'core',
   },
   {
@@ -546,6 +593,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'AI / ML for Finance / 金融AI',
     tags: ['llm', 'api', 'research', 'automation', '大模型'],
+    access: ['海外可用', '可能需要代理', '需要登录'],
     priority: 'useful',
   },
   {
@@ -557,6 +605,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'AI / ML for Finance / 金融AI',
     tags: ['llm apps', 'agents', 'retrieval', 'framework', '智能体'],
+    access: ['海外可用', '可能需要代理'],
     priority: 'useful',
   },
   {
@@ -568,6 +617,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'AI / ML for Finance / 金融AI',
     tags: ['reinforcement learning', 'trading', 'open source', 'python', '强化学习'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'useful',
   },
   {
@@ -579,6 +629,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'AI / ML for Finance / 金融AI',
     tags: ['github', 'machine learning', 'quant', 'open source', '量化开源'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'optional',
   },
   {
@@ -590,6 +641,7 @@ export const sites: Site[] = [
     market: '加密',
     category: 'Market Data / 行情数据',
     tags: ['crypto', 'market cap', 'rankings', 'exchanges', '加密行情'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -601,6 +653,7 @@ export const sites: Site[] = [
     market: '加密',
     category: 'Market Data / 行情数据',
     tags: ['crypto', 'prices', 'api', 'categories', '加密数据'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -612,6 +665,7 @@ export const sites: Site[] = [
     market: '加密',
     category: 'Market Data / 行情数据',
     tags: ['defi', 'tvl', 'protocols', 'yields', '链上'],
+    access: ['海外可用', '可能需要代理', '免费可用'],
     priority: 'core',
   },
   {
@@ -623,6 +677,7 @@ export const sites: Site[] = [
     market: '加密',
     category: 'Data Vendor / 数据供应商',
     tags: ['on-chain', 'analytics', 'bitcoin', 'metrics', '链上数据'],
+    access: ['海外可用', '可能需要代理', '需要登录', '付费终端'],
     priority: 'useful',
   },
   {
@@ -634,6 +689,7 @@ export const sites: Site[] = [
     market: '加密',
     category: 'Data Vendor / 数据供应商',
     tags: ['on-chain', 'exchange flows', 'analytics', 'signals', '资金流'],
+    access: ['海外可用', '可能需要代理', '需要登录', '付费终端'],
     priority: 'useful',
   },
   {
@@ -645,6 +701,7 @@ export const sites: Site[] = [
     market: '加密',
     category: 'Market Data / 行情数据',
     tags: ['fundamentals', 'protocol revenue', 'fees', 'valuation', '基本面'],
+    access: ['海外可用', '可能需要代理', '需要登录', '付费终端'],
     priority: 'useful',
   },
   {
@@ -657,6 +714,7 @@ export const sites: Site[] = [
     category: 'Tools / Visualization / 工具可视化',
     tags: ['code', 'repositories', 'open source', 'collaboration', '代码'],
     aliases: ['gh', 'github'],
+    access: ['海外可用', '可能需要代理'],
     priority: 'core',
   },
   {
@@ -668,6 +726,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Tools / Visualization / 工具可视化',
     tags: ['datasets', 'notebooks', 'competitions', 'machine learning', '数据集'],
+    access: ['海外可用', '可能需要代理'],
     priority: 'useful',
   },
   {
@@ -679,6 +738,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Tools / Visualization / 工具可视化',
     tags: ['dashboards', 'python', 'apps', 'prototyping', '看板'],
+    access: ['海外可用', '可能需要代理'],
     priority: 'core',
   },
   {
@@ -690,6 +750,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Tools / Visualization / 工具可视化',
     tags: ['charts', 'dashboards', 'visualization', 'python', '可视化'],
+    access: ['海外可用', '可能需要代理'],
     priority: 'core',
   },
   {
@@ -701,6 +762,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Tools / Visualization / 工具可视化',
     tags: ['notebooks', 'javascript', 'visualization', 'data apps', '可视化'],
+    access: ['海外可用', '可能需要代理'],
     priority: 'useful',
   },
   {
@@ -712,6 +774,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Tools / Visualization / 工具可视化',
     tags: ['notebooks', 'python', 'research', 'analysis', '研究'],
+    access: ['海外可用', '可能需要代理'],
     priority: 'core',
   },
   {
@@ -725,6 +788,7 @@ export const sites: Site[] = [
     category: 'Market Data / 行情数据',
     tags: ['A股', '行情', '资金流', '板块', '财报'],
     aliases: ['dfcf', 'eastmoney', 'dongfangcaifu'],
+    access: ['国内可用', '免费可用'],
     priority: 'core',
     noteZh: 'A股行情、资金流、板块、财报和资讯的高频入口。',
   },
@@ -739,6 +803,7 @@ export const sites: Site[] = [
     category: 'Market Data / 行情数据',
     tags: ['A股', '行情', '板块', '热度', '个股资料'],
     aliases: ['ths', '10jqka', 'tonghuashun'],
+    access: ['国内可用', '免费可用'],
     priority: 'core',
     noteZh: '适合快速查看A股行情、板块热度和个股资料。',
   },
@@ -752,6 +817,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Community / 社区论坛',
     tags: ['社区', '情绪', '讨论', '个股关注度', 'A股'],
+    access: ['国内可用', '免费可用'],
     priority: 'useful',
     noteZh: '适合观察散户情绪、热门讨论和个股关注度。',
   },
@@ -766,6 +832,7 @@ export const sites: Site[] = [
     category: 'News & Macro / 新闻宏观',
     tags: ['快讯', '政策', '产业新闻', '宏观', 'A股'],
     aliases: ['cls', 'cailianshe'],
+    access: ['国内可用', '免费可用'],
     priority: 'useful',
     noteZh: '适合追踪A股实时快讯、政策变化和产业新闻。',
   },
@@ -779,6 +846,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'News & Macro / 新闻宏观',
     tags: ['证券新闻', '政策解读', '市场新闻', 'A股'],
+    access: ['国内可用', '免费可用'],
     priority: 'useful',
     noteZh: '适合查看证券市场新闻和政策解读。',
   },
@@ -793,6 +861,7 @@ export const sites: Site[] = [
     category: 'Filings / 公告披露',
     tags: ['公告', '年报', '半年报', '问询函', '披露'],
     aliases: ['cninfo', 'juchao'],
+    access: ['国内可用', '免费可用'],
     priority: 'core',
     noteZh: 'A股上市公司公告、年报、半年报、问询函等原始披露入口。',
   },
@@ -806,6 +875,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Regulatory / 监管交易所',
     tags: ['上交所', '沪市', '公告', '规则', '监管'],
+    access: ['国内可用', '免费可用'],
     priority: 'core',
     noteZh: '上海证券交易所官网，适合查沪市公告、规则、监管信息。',
   },
@@ -819,6 +889,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Regulatory / 监管交易所',
     tags: ['深交所', '深市', '公告', '规则', '监管'],
+    access: ['国内可用', '免费可用'],
     priority: 'core',
     noteZh: '深圳证券交易所官网，适合查深市公告、规则、监管信息。',
   },
@@ -832,6 +903,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Regulatory / 监管交易所',
     tags: ['北交所', '公告', '规则', '上市公司', '监管'],
+    access: ['国内可用', '免费可用'],
     priority: 'useful',
     noteZh: '北京证券交易所官网，适合查看北交所上市公司和规则信息。',
   },
@@ -845,6 +917,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Regulatory / 监管交易所',
     tags: ['证监会', '监管政策', '处罚', '法规', '通知'],
+    access: ['国内可用', '免费可用'],
     priority: 'core',
     noteZh: '中国资本市场监管政策、处罚、法规和官方通知入口。',
   },
@@ -858,6 +931,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Filings / 公告披露',
     tags: ['互动易', '投资者问答', '公司回应', '关注点', '披露'],
+    access: ['国内可用', '免费可用'],
     priority: 'useful',
     noteZh: '投资者互动问答入口，可辅助观察公司回应和市场关注点。',
   },
@@ -872,6 +946,7 @@ export const sites: Site[] = [
     category: 'Backtesting / 回测平台',
     tags: ['A股量化', '回测', '因子研究', '模拟交易', 'Python'],
     aliases: ['jq', 'joinquant'],
+    access: ['国内可用', '需要登录'],
     priority: 'core',
     noteZh: 'A股量化学习、策略回测、因子研究和模拟交易常用平台。',
   },
@@ -886,6 +961,7 @@ export const sites: Site[] = [
     category: 'Backtesting / 回测平台',
     tags: ['量化投研', '数据', '回测', '风险归因', '资管'],
     aliases: ['rq', 'ricequant'],
+    access: ['国内可用', '需要登录', '付费终端'],
     priority: 'core',
     noteZh: '量化投研、数据、回测、风险归因和资管系统平台。',
   },
@@ -899,6 +975,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'AI / ML for Finance / 金融AI',
     tags: ['AI量化', '机器学习', '因子挖掘', '策略研究', 'A股'],
+    access: ['国内可用', '需要登录'],
     priority: 'useful',
     noteZh: '偏AI量化、机器学习因子挖掘和策略研究的平台。',
   },
@@ -912,6 +989,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Backtesting / 回测平台',
     tags: ['通联数据', 'A股数据', '策略实验', '量化研究', '回测'],
+    access: ['国内可用', '需要登录'],
     priority: 'useful',
     noteZh: '通联数据旗下量化研究平台，适合A股数据研究和策略实验。',
   },
@@ -925,6 +1003,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Backtesting / 回测平台',
     tags: ['掘金量化', '策略开发', '回测', '交易平台', 'A股'],
+    access: ['国内可用', '需要登录'],
     priority: 'useful',
     noteZh: '国内量化研究和交易平台，支持策略开发与回测。',
   },
@@ -938,6 +1017,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Broker / Trading / 券商交易',
     tags: ['QMT', '迅投', '实盘交易', '券商接口', 'A股量化'],
+    access: ['国内可用', '需要登录', '付费终端'],
     priority: 'useful',
     noteZh: 'A股量化实盘常见交易终端之一，常用于券商量化接口环境。',
   },
@@ -951,6 +1031,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Broker / Trading / 券商交易',
     tags: ['PTrade', '恒生', '程序化交易', '券商系统', '机构'],
+    access: ['国内可用', '付费终端', '机构权限'],
     priority: 'useful',
     noteZh: '国内机构常见程序化交易和券商交易系统相关入口。',
   },
@@ -964,6 +1045,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Market Data / 行情数据',
     tags: ['中证指数', '沪深300', '中证500', '中证1000', '指数样本'],
+    access: ['国内可用', '免费可用'],
     priority: 'core',
     noteZh: '沪深300、中证500、中证1000等指数资料和样本调整入口。',
   },
@@ -977,6 +1059,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Market Data / 行情数据',
     tags: ['国证指数', '深市指数', '指数资料', '样本股', '行情'],
+    access: ['国内可用', '免费可用'],
     priority: 'useful',
     noteZh: '深市及国证系列指数资料入口。',
   },
@@ -990,6 +1073,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Factor Research / 因子研究',
     tags: ['申万行业', '行业分类', '研究观点', '行业研究', '因子'],
+    access: ['国内可用', '免费可用'],
     priority: 'useful',
     noteZh: '申万行业分类、研究观点和A股行业研究参考入口。',
   },
@@ -1003,6 +1087,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Data Vendor / 数据供应商',
     tags: ['Wind', '机构数据', '行情', '财务', '宏观'],
+    access: ['国内可用', '付费终端', '机构权限'],
     priority: 'core',
     noteZh: '国内机构级金融数据终端，适合行情、财务、债券、基金和宏观数据。',
   },
@@ -1016,6 +1101,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Data Vendor / 数据供应商',
     tags: ['Choice', '东方财富', '数据终端', '行业', '基金'],
+    access: ['国内可用', '付费终端', '机构权限'],
     priority: 'useful',
     noteZh: '东方财富旗下金融数据终端，适合A股数据、行业和基金研究。',
   },
@@ -1029,6 +1115,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Data Vendor / 数据供应商',
     tags: ['iFinD', '同花顺', '数据终端', '研报', '金融分析'],
+    access: ['国内可用', '付费终端', '机构权限'],
     priority: 'useful',
     noteZh: '同花顺旗下机构数据终端，适合A股数据、研报和金融分析。',
   },
@@ -1042,6 +1129,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Market Data / 行情数据',
     tags: ['基金', '净值', '基金经理', '持仓', '比较'],
+    access: ['国内可用', '免费可用'],
     priority: 'useful',
     noteZh: '公募基金净值、基金经理、持仓和基金比较常用入口。',
   },
@@ -1055,6 +1143,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Market Data / 行情数据',
     tags: ['私募', '业绩', '排名', '产品', '基金'],
+    access: ['国内可用', '需要登录'],
     priority: 'optional',
     noteZh: '私募基金业绩、排名和产品信息参考入口。',
   },
@@ -1068,6 +1157,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Regulatory / 监管交易所',
     tags: ['基金业协会', '私募备案', '管理人', '自律', '监管'],
+    access: ['国内可用', '免费可用'],
     priority: 'useful',
     noteZh: '基金、私募管理人备案和行业自律信息入口。',
   },
@@ -1081,6 +1171,7 @@ export const sites: Site[] = [
     market: '港股',
     category: 'Regulatory / 监管交易所',
     tags: ['港交所', '港股', '上市规则', '公告', '市场数据'],
+    access: ['国内可用', '海外可用', '免费可用'],
     priority: 'core',
     noteZh: '港股上市规则、公告、市场数据和交易所信息入口。',
   },
@@ -1094,6 +1185,7 @@ export const sites: Site[] = [
     market: '港股',
     category: 'Filings / 公告披露',
     tags: ['披露易', '港股公告', '财报', '披露文件', '公告'],
+    access: ['国内可用', '海外可用', '免费可用'],
     priority: 'core',
     noteZh: '港股上市公司公告、财报和披露文件官方入口。',
   },
@@ -1107,6 +1199,7 @@ export const sites: Site[] = [
     market: '港股',
     category: 'Market Data / 行情数据',
     tags: ['港股行情', '新闻', '窝轮', '牛熊证', '市场数据'],
+    access: ['国内可用', '海外可用', '免费可用'],
     priority: 'useful',
     noteZh: '港股行情、新闻、窝轮牛熊证和市场数据入口。',
   },
@@ -1120,6 +1213,7 @@ export const sites: Site[] = [
     market: '港股',
     category: 'Broker / Trading / 券商交易',
     tags: ['富途', '港美股', '交易', '社区', '行情'],
+    access: ['国内可用', '海外可用', '需要登录'],
     priority: 'useful',
     noteZh: '港美股行情、交易和社区讨论入口。',
   },
@@ -1133,6 +1227,7 @@ export const sites: Site[] = [
     market: '港股',
     category: 'Broker / Trading / 券商交易',
     tags: ['老虎证券', '港美股', '交易', '行情', '投资工具'],
+    access: ['国内可用', '海外可用', '需要登录'],
     priority: 'useful',
     noteZh: '港美股交易、行情和投资工具入口。',
   },

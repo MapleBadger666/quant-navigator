@@ -1,4 +1,4 @@
-import { categoryLabels, priorityLabels, type Language } from '../data/markets';
+import { accessLabels, categoryLabels, priorityLabels, type Language } from '../data/markets';
 import type { Site } from '../data/sites';
 
 type SiteCardProps = {
@@ -54,6 +54,18 @@ export function SiteCard({
               {priority}
             </p>
           </div>
+          {site.access && site.access.length > 0 ? (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {site.access.map((access) => (
+                <span
+                  key={access}
+                  className="rounded-full border border-white/10 bg-terminal-900/70 px-2 py-0.5 text-[11px] font-medium text-slate-400"
+                >
+                  {accessLabels[access][language]}
+                </span>
+              ))}
+            </div>
+          ) : null}
           <h2 className="mt-4 text-xl font-semibold text-white">{title}</h2>
           {subtitle ? <p className="mt-1 text-sm text-slate-500">{subtitle}</p> : null}
         </div>
