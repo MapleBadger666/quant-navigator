@@ -14,6 +14,7 @@ type FavoritesState = {
   isSupabaseConfigured: boolean;
   isRemote: boolean;
   toggleFavorite: (siteId: string) => Promise<void>;
+  clearLocalFavorites: () => void;
   importGuestFavorites: () => Promise<{ importedCount: number; success: boolean }>;
   clearFavoritesMessage: () => void;
   message: string | null;
@@ -183,6 +184,14 @@ export function useFavorites(user: User | null): FavoritesState {
     return { importedCount: guestFavoriteIds.length, success: true };
   }, [user]);
 
+  const clearLocalFavorites = useCallback(() => {
+    saveFavoriteSiteIds([]);
+
+    if (mode === 'local') {
+      setFavoriteIds(new Set());
+    }
+  }, [mode]);
+
   return useMemo(
     () => ({
       favoriteIds,
@@ -193,11 +202,13 @@ export function useFavorites(user: User | null): FavoritesState {
       isSupabaseConfigured,
       isRemote,
       toggleFavorite,
+      clearLocalFavorites,
       importGuestFavorites,
       clearFavoritesMessage: () => setMessage(null),
       message,
     }),
     [
+      clearLocalFavorites,
       error,
       favoriteIds,
       importGuestFavorites,

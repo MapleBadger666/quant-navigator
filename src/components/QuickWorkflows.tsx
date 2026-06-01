@@ -14,36 +14,14 @@ type QuickWorkflowsProps = {
   language: Language;
   activeWorkflowFilterId: string | null;
   onFilterSites: (workflow: Workflow) => void;
+  favoriteWorkflowIds: Set<string>;
+  onToggleWorkflowFavorite: (workflowId: string) => void;
 };
-
-const workflowFavoriteStorageKey = 'quant_navigator_workflow_favorites';
 
 const viewLabels: Record<WorkflowView, { en: string; zh: string }> = {
   common: { en: 'Common Workflows', zh: '常用工作流' },
   all: { en: 'All Workflows', zh: '全部工作流' },
   favorites: { en: 'Favorite Workflows', zh: '已收藏工作流' },
-};
-
-const readFavoriteWorkflowIds = () => {
-  if (typeof window === 'undefined') {
-    return new Set<string>();
-  }
-
-  try {
-    const rawValue = window.localStorage.getItem(workflowFavoriteStorageKey);
-    const parsedValue = rawValue ? JSON.parse(rawValue) : [];
-    return new Set<string>(Array.isArray(parsedValue) ? parsedValue : []);
-  } catch {
-    return new Set<string>();
-  }
-};
-
-const persistFavoriteWorkflowIds = (ids: Set<string>) => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  window.localStorage.setItem(workflowFavoriteStorageKey, JSON.stringify([...ids]));
 };
 
 export function QuickWorkflows({
@@ -53,12 +31,11 @@ export function QuickWorkflows({
   language,
   activeWorkflowFilterId,
   onFilterSites,
+  favoriteWorkflowIds,
+  onToggleWorkflowFavorite,
 }: QuickWorkflowsProps) {
   const [selectedView, setSelectedView] = useState<WorkflowView>('common');
   const [expandedWorkflowIds, setExpandedWorkflowIds] = useState<Set<string>>(() => new Set());
-  const [favoriteWorkflowIds, setFavoriteWorkflowIds] = useState<Set<string>>(
-    readFavoriteWorkflowIds,
-  );
   const [lastOpenedWorkflowId, setLastOpenedWorkflowId] = useState<string | null>(null);
   const visibleWorkflows = useMemo(() => {
     return workflows
@@ -114,21 +91,6 @@ export function QuickWorkflows({
         next.add(workflowId);
       }
 
-      return next;
-    });
-  };
-
-  const toggleFavorite = (workflowId: string) => {
-    setFavoriteWorkflowIds((current) => {
-      const next = new Set(current);
-
-      if (next.has(workflowId)) {
-        next.delete(workflowId);
-      } else {
-        next.add(workflowId);
-      }
-
-      persistFavoriteWorkflowIds(next);
       return next;
     });
   };
@@ -214,7 +176,7 @@ export function QuickWorkflows({
                         <button
                           type="button"
                           aria-pressed={isFavorite}
-                          onClick={() => toggleFavorite(workflow.id)}
+                          onClick={() => onToggleWorkflowFavorite(workflow.id)}
                           className={[
                             'rounded-lg border px-3 py-2 text-xs font-semibold transition',
                             isFavorite

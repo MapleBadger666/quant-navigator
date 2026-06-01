@@ -6,6 +6,7 @@ type NavbarProps = {
   favoriteCount: number;
   language: Language;
   onLanguageChange: (language: Language) => void;
+  onOpenSettings: () => void;
   authContent: ReactNode;
   runtime: 'web' | 'desktop';
 };
@@ -15,6 +16,7 @@ export function Navbar({
   favoriteCount,
   language,
   onLanguageChange,
+  onOpenSettings,
   authContent,
   runtime,
 }: NavbarProps) {
@@ -58,6 +60,13 @@ export function Navbar({
                 </button>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={onOpenSettings}
+              className="shrink-0 rounded-full border border-terminal-accent/25 bg-terminal-accent/10 px-4 py-2 text-xs font-semibold text-terminal-accent transition hover:border-terminal-accent/60 hover:bg-terminal-accent hover:text-terminal-950"
+            >
+              {language === 'zh' ? '设置 / 帮助' : 'Settings / Help'}
+            </button>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-3">

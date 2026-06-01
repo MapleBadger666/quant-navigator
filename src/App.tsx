@@ -8,6 +8,7 @@ import { Navbar } from './components/Navbar';
 import { PinBoard } from './components/PinBoard';
 import { QuickWorkflows } from './components/QuickWorkflows';
 import { SearchBar } from './components/SearchBar';
+import { SettingsHelpModal } from './components/SettingsHelpModal';
 import { SiteCard } from './components/SiteCard';
 import {
   allMarket,
@@ -25,6 +26,8 @@ import { workflows, type Workflow } from './data/workflows';
 import { useAuth } from './hooks/useAuth';
 import { useFavorites } from './hooks/useFavorites';
 import { usePinnedSites } from './hooks/usePinnedSites';
+import { useWorkflowFavorites } from './hooks/useWorkflowFavorites';
+import { clearAllLocalSettings } from './utils/storage';
 
 const allCategory = 'All';
 
@@ -56,11 +59,13 @@ function App() {
   const [selectedAccess, setSelectedAccess] = useState<AccessFilterValue>(allAccess);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [workflowSiteFilter, setWorkflowSiteFilter] = useState<WorkflowSiteFilter | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [language, setLanguage] = useState<Language>(() => getInitialLanguage());
   const runtime = window.electronAPI?.isElectron ? 'desktop' : 'web';
   const auth = useAuth();
   const favorites = useFavorites(auth.user);
   const pinned = usePinnedSites();
+  const workflowFavorites = useWorkflowFavorites();
 
   const sitesById = useMemo(() => new Map(sites.map((site) => [site.id, site])), []);
   const pinnedSites = useMemo(
@@ -183,6 +188,13 @@ function App() {
     setWorkflowSiteFilter(null);
   };
 
+  const resetLocalSettings = () => {
+    clearAllLocalSettings();
+    favorites.clearLocalFavorites();
+    pinned.clearPinned();
+    workflowFavorites.clearWorkflowFavorites();
+  };
+
   return (
     <div className="min-h-screen text-slate-100">
       <Navbar
@@ -190,6 +202,7 @@ function App() {
         favoriteCount={favorites.favoriteCount}
         language={language}
         onLanguageChange={setLanguage}
+        onOpenSettings={() => setIsSettingsOpen(true)}
         runtime={runtime}
         authContent={
           <AuthBar
@@ -207,6 +220,17 @@ function App() {
             onImportGuestFavorites={favorites.importGuestFavorites}
           />
         }
+      />
+
+      <SettingsHelpModal
+        isOpen={isSettingsOpen}
+        language={language}
+        isRemoteFavorites={favorites.isRemote}
+        onClose={() => setIsSettingsOpen(false)}
+        onClearFavorites={favorites.clearLocalFavorites}
+        onClearPinned={pinned.clearPinned}
+        onClearWorkflowFavorites={workflowFavorites.clearWorkflowFavorites}
+        onResetLocalSettings={resetLocalSettings}
       />
 
       <CommandPalette
@@ -268,6 +292,8 @@ function App() {
             language={language}
             activeWorkflowFilterId={workflowSiteFilter?.workflowId ?? null}
             onFilterSites={filterWorkflowSites}
+            favoriteWorkflowIds={workflowFavorites.workflowFavoriteIds}
+            onToggleWorkflowFavorite={workflowFavorites.toggleWorkflowFavorite}
           />
         </div>
 

@@ -184,6 +184,7 @@ Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要�
 - Search across English names, Chinese names, descriptions, categories, tags, and notes.
 - Command Palette opens with `Cmd+K` / `Ctrl+K` to search sites and workflows from anywhere in the app.
 - Access Tags show manual access hints such as Mainland CN, Global, Proxy likely, Login, Paid, Institutional, and Free.
+- Settings / Help explains the app, shortcuts, local storage, and lets users clear local favorites, pins, and workflow favorites.
 - Guest favorites persist in `localStorage`.
 - Optional Supabase Auth + database sync gives each signed-in user a private favorites list.
 - Pin Board gives the home page a compact quick-launch area for the user's most-used websites.
@@ -209,6 +210,7 @@ src/
     useAuth.ts
     useFavorites.ts
     usePinnedSites.ts
+    useWorkflowFavorites.ts
   lib/
     supabaseClient.ts
   components/
@@ -221,6 +223,7 @@ src/
     PinBoard.tsx
     QuickWorkflows.tsx
     SearchBar.tsx
+    SettingsHelpModal.tsx
     SiteCard.tsx
   utils/
     storage.ts
@@ -284,6 +287,26 @@ Each site may include manual access hints:
 - `免费可用` / `Free`
 
 These tags are manually curated notes, not real-time network checks. Quant Navigator does not automatically ping websites, probe availability, or test login/paywall state. This avoids CORS issues, regional network false positives, and misleading results from temporary connectivity differences.
+
+## Settings / Help
+
+Use the `设置 / 帮助` / `Settings / Help` button in the top navigation to open the help and settings modal.
+
+The Help section covers:
+
+- What Quant Navigator is.
+- How search, Market, Category, and Access filters work.
+- How to use Quick Workflows, Pin Board, Favorites, and Command Palette.
+- Windows offline desktop build notes.
+- localStorage behavior.
+
+The Settings section can clear:
+
+- Local favorites: `quant_navigator_guest_favorites`
+- Pin Board entries: `quant_navigator_pinned_sites`
+- Workflow favorites: `quant_navigator_workflow_favorites`
+
+`Reset all local settings` / `重置全部本地设置` clears all local keys after a confirmation prompt. It only affects the current browser or Electron app localStorage. It does not open folders, manage local projects, or execute local commands.
 
 ### Multi-User Favorites
 
