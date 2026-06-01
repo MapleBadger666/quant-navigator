@@ -15,11 +15,18 @@ import {
   type Priority,
 } from './data/markets';
 import { sites } from './data/sites';
-import { workflows } from './data/workflows';
+import { workflows, type Workflow } from './data/workflows';
 import { useAuth } from './hooks/useAuth';
 import { useFavorites } from './hooks/useFavorites';
 
 const allCategory = 'All';
+
+type WorkflowSiteFilter = {
+  workflowId: string;
+  title: string;
+  titleZh: string;
+  siteIds: Set<string>;
+};
 
 const priorityRank: Record<Priority, number> = {
   core: 0,
@@ -40,6 +47,7 @@ function App() {
   const [selectedMarket, setSelectedMarket] = useState<MarketFilter>(allMarket);
   const [selectedCategory, setSelectedCategory] = useState<'All' | Category>(allCategory);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [workflowSiteFilter, setWorkflowSiteFilter] = useState<WorkflowSiteFilter | null>(null);
   const [language, setLanguage] = useState<Language>(() => getInitialLanguage());
   const runtime = window.electronAPI?.isElectron ? 'desktop' : 'web';
   const auth = useAuth();
@@ -51,6 +59,7 @@ function App() {
     const normalizedQuery = query.trim().toLowerCase();
 
     return sites
+      .filter((site) => !workflowSiteFilter || workflowSiteFilter.siteIds.has(site.id))
       .filter((site) => selectedMarket === allMarket || site.market === selectedMarket)
       .filter((site) => selectedCategory === allCategory || site.category === selectedCategory)
       .filter((site) => !showFavoritesOnly || favorites.favoriteIds.has(site.id))
@@ -109,13 +118,43 @@ function App() {
 
         return firstFavorite ? -1 : 1;
       });
-  }, [favorites.favoriteIds, language, query, selectedCategory, selectedMarket, showFavoritesOnly]);
+  }, [
+    favorites.favoriteIds,
+    language,
+    query,
+    selectedCategory,
+    selectedMarket,
+    showFavoritesOnly,
+    workflowSiteFilter,
+  ]);
 
   const hasActiveFilters =
     query.trim().length > 0 ||
     selectedCategory !== allCategory ||
     selectedMarket !== allMarket ||
-    showFavoritesOnly;
+    showFavoritesOnly ||
+    Boolean(workflowSiteFilter);
+
+  const filterWorkflowSites = (workflow: Workflow) => {
+    setWorkflowSiteFilter({
+      workflowId: workflow.id,
+      title: workflow.title,
+      titleZh: workflow.titleZh,
+      siteIds: new Set(workflow.siteIds),
+    });
+    setQuery('');
+    setSelectedMarket(allMarket);
+    setSelectedCategory(allCategory);
+    setShowFavoritesOnly(false);
+  };
+
+  const clearFilters = () => {
+    setQuery('');
+    setSelectedMarket(allMarket);
+    setSelectedCategory(allCategory);
+    setShowFavoritesOnly(false);
+    setWorkflowSiteFilter(null);
+  };
 
   return (
     <div className="min-h-screen text-slate-100">
@@ -180,6 +219,8 @@ function App() {
             sitesById={sitesById}
             selectedMarket={selectedMarket}
             language={language}
+            activeWorkflowFilterId={workflowSiteFilter?.workflowId ?? null}
+            onFilterSites={filterWorkflowSites}
           />
         </div>
 
@@ -202,6 +243,22 @@ function App() {
                     ? 'Supabase 未配置，当前使用本地收藏模式'
                     : 'Supabase is not configured. Using local favorites.'}
               </p>
+            ) : null}
+            {workflowSiteFilter ? (
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-terminal-accent/30 bg-terminal-accent/10 px-3 py-1 text-xs text-terminal-accent">
+                  {language === 'zh'
+                    ? `工作流筛选：${workflowSiteFilter.titleZh}`
+                    : `Workflow filter: ${workflowSiteFilter.title}`}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setWorkflowSiteFilter(null)}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-slate-400 transition hover:border-terminal-accent/40 hover:text-terminal-accent"
+                >
+                  {language === 'zh' ? '清除工作流筛选' : 'Clear workflow filter'}
+                </button>
+              </div>
             ) : null}
           </div>
           <div className="flex flex-col gap-2 text-left sm:items-end sm:text-right">
@@ -256,12 +313,7 @@ function App() {
             {hasActiveFilters ? (
               <button
                 type="button"
-                onClick={() => {
-                  setQuery('');
-                  setSelectedMarket(allMarket);
-                  setSelectedCategory(allCategory);
-                  setShowFavoritesOnly(false);
-                }}
+                onClick={clearFilters}
                 className="mt-6 rounded-xl border border-terminal-accent/40 bg-terminal-accent/10 px-5 py-3 text-sm font-semibold text-terminal-accent transition hover:bg-terminal-accent hover:text-terminal-950"
               >
                 {language === 'zh' ? '清空筛选' : 'Clear filters'}

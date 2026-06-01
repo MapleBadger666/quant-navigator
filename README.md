@@ -1,6 +1,8 @@
 # Quant Navigator
 
-Quant Navigator is a local React + TypeScript + Vite + Tailwind CSS navigation workstation for quantitative research. Stage 3 adds a bilingual China-focused research terminal layout with market tabs for A-shares, US stocks, Hong Kong stocks, crypto, and shared tools.
+Quant Navigator is a React + TypeScript + Vite + Tailwind CSS quick-launch assistant for quantitative research websites. It helps users find, filter, favorite, and open web resources for A-shares, US stocks, Hong Kong stocks, crypto, macro research, factor research, papers, and backtesting tools.
+
+It is intentionally not a local project manager, local code executor, or command runner. The product surface is website navigation and quick workflow launching only.
 
 ## Run Locally
 
@@ -183,8 +185,11 @@ Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要�
 - Guest favorites persist in `localStorage`.
 - Optional Supabase Auth + database sync gives each signed-in user a private favorites list.
 - Priority labels: `core`, `useful`, and `optional`.
-- Quick Workflows open a group of research websites in new tabs.
+- Quick Workflows group research paths by scenario, show bilingual names, market, website count, priority, and tags.
+- Workflow cards can expand their website list, open all included websites, filter the main resource list to those websites, and save workflow favorites.
+- Workflow favorites persist locally with browser or Electron `localStorage`.
 - The app remains front-end only. Supabase is optional and configured through environment variables.
+- No local folder opening, local project opening, local command execution, or backend service is included.
 
 ## Project Structure
 
@@ -221,6 +226,12 @@ If Supabase is not configured, or the user is not signed in, favorites are saved
 
 ```text
 quant_navigator_guest_favorites
+```
+
+Workflow favorites are also local-only and saved with this key:
+
+```text
+quant_navigator_workflow_favorites
 ```
 
 The app will continue to work without Supabase. In this mode the UI shows that it is using local favorites.
@@ -367,14 +378,17 @@ Open `src/data/workflows.ts` and add a workflow:
   id: 'a-share-example-workflow',
   title: 'A-Share Example Workflow',
   titleZh: 'A股示例工作流',
+  group: 'A股每日',
   market: 'A股',
+  priority: 'useful',
+  tags: ['行情', '数据', 'daily'],
   description: 'Open a useful set of research websites.',
   descriptionZh: '打开一组常用投研网站。',
   siteIds: ['eastmoney', 'cninfo', 'joinquant']
 }
 ```
 
-Each `siteIds` value must match an existing `id` in `src/data/sites.ts`.
+Each `siteIds` value must match an existing `id` in `src/data/sites.ts`. Use one of the existing workflow groups in `src/data/workflows.ts` so the card appears under the right scenario.
 
 ## Language Switching
 
@@ -387,8 +401,7 @@ The app currently defaults to Chinese.
 
 ## Future Extensions
 
-- Connect local backtesting reports.
-- Connect a local factor library.
-- Add research report parsing.
-- Add A-share data download scripts.
-- Evolve into a personal quantitative research workstation.
+- Add more curated web workflows for specific research routines.
+- Improve workflow search and tag filtering.
+- Add exportable web resource collections.
+- Add more bilingual notes for how each website supports quant research.
