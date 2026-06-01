@@ -162,6 +162,38 @@ To download the package:
 
 If Supabase is not configured, favorites are stored in Electron local storage on the current machine. Different computers do not sync favorites automatically. To sync favorites across machines, configure Supabase and sign in with the same account.
 
+## 版本发布
+
+The current app version is defined in `package.json`:
+
+```json
+"version": "0.1.0"
+```
+
+Quant Navigator has two delivery channels:
+
+- Web version: deploy automatically through Vercel, GitHub Pages, Netlify, or another static hosting platform after `npm run build`.
+- Windows offline version: build with GitHub Actions and download the generated artifact.
+
+Recommended release flow:
+
+1. Confirm `package.json` has the intended `version`.
+2. Let Vercel / GitHub Pages deploy the Web version.
+3. Use the Windows GitHub Actions workflow to build the desktop package.
+4. Download the Windows artifact and test both generated executables.
+5. Create a GitHub Release, such as `v0.1.0`.
+6. Upload the Windows `.exe` files to the Release so users can download stable assets instead of temporary Actions artifacts.
+
+Windows package guidance:
+
+- Portable version: best for no-install trials, demos, and quick sharing. Users can run it directly.
+- Setup version: best for long-term use because it installs shortcuts and behaves like a normal Windows desktop app.
+
+More release details:
+
+- [Release Checklist](docs/release-checklist.md)
+- [User Guide](docs/user-guide.md)
+
 ## 中国大陆用户访问方案
 
 Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要代理或出现不稳定。国内用户建议使用腾讯云 EdgeOne Pages、腾讯云 COS 静态网站或阿里云 OSS 静态网站部署 `dist/`。
