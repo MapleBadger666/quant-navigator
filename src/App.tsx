@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
 import { AuthBar } from './components/AuthBar';
 import { CategoryFilter } from './components/CategoryFilter';
+import { CommandPalette } from './components/CommandPalette';
 import { MarketTabs } from './components/MarketTabs';
 import { Navbar } from './components/Navbar';
+import { PinBoard } from './components/PinBoard';
 import { QuickWorkflows } from './components/QuickWorkflows';
 import { SearchBar } from './components/SearchBar';
 import { SiteCard } from './components/SiteCard';
@@ -14,10 +16,11 @@ import {
   type MarketFilter,
   type Priority,
 } from './data/markets';
-import { sites } from './data/sites';
+import { sites, type Site } from './data/sites';
 import { workflows, type Workflow } from './data/workflows';
 import { useAuth } from './hooks/useAuth';
 import { useFavorites } from './hooks/useFavorites';
+import { usePinnedSites } from './hooks/usePinnedSites';
 
 const allCategory = 'All';
 
@@ -52,8 +55,16 @@ function App() {
   const runtime = window.electronAPI?.isElectron ? 'desktop' : 'web';
   const auth = useAuth();
   const favorites = useFavorites(auth.user);
+  const pinned = usePinnedSites();
 
   const sitesById = useMemo(() => new Map(sites.map((site) => [site.id, site])), []);
+  const pinnedSites = useMemo(
+    () =>
+      [...pinned.pinnedIds]
+        .map((siteId) => sitesById.get(siteId))
+        .filter((site): site is Site => Boolean(site)),
+    [pinned.pinnedIds, sitesById],
+  );
 
   const filteredSites = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -80,6 +91,7 @@ function App() {
           site.note,
           site.noteZh,
           ...site.tags,
+          ...(site.aliases ?? []),
         ]
           .filter(Boolean)
           .join(' ')
@@ -182,6 +194,14 @@ function App() {
         }
       />
 
+      <CommandPalette
+        sites={sites}
+        workflows={workflows}
+        sitesById={sitesById}
+        language={language}
+        onFilterWorkflow={filterWorkflowSites}
+      />
+
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <section className="mb-9">
           <div className="max-w-4xl">
@@ -200,6 +220,13 @@ function App() {
 
           <div className="mt-8 space-y-5">
             <SearchBar value={query} onChange={setQuery} language={language} />
+            <PinBoard
+              pinnedSites={pinnedSites}
+              pinnedCount={pinned.pinnedCount}
+              language={language}
+              onTogglePinned={pinned.togglePinned}
+              onClearPinned={pinned.clearPinned}
+            />
             <MarketTabs
               selectedMarket={selectedMarket}
               onSelectMarket={setSelectedMarket}
@@ -292,7 +319,9 @@ function App() {
                 key={site.id}
                 site={site}
                 isFavorite={favorites.favoriteIds.has(site.id)}
+                isPinned={pinned.pinnedIds.has(site.id)}
                 onToggleFavorite={favorites.toggleFavorite}
+                onTogglePinned={pinned.togglePinned}
                 language={language}
               />
             ))}

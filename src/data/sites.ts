@@ -10,6 +10,7 @@ export type Site = {
   market: Market;
   category: Category;
   tags: string[];
+  aliases?: string[];
   priority: Priority;
   note?: string;
   noteZh?: string;
@@ -26,6 +27,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Market Data / 行情数据',
     tags: ['quotes', 'stocks', 'earnings', 'watchlists', '美股行情'],
+    aliases: ['yf', 'yahoo'],
     priority: 'core',
   },
   {
@@ -37,6 +39,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Market Data / 行情数据',
     tags: ['charts', 'technical analysis', 'alerts', 'screeners', '图表'],
+    aliases: ['tv', 'tradingview'],
     priority: 'core',
   },
   {
@@ -59,6 +62,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Market Data / 行情数据',
     tags: ['macro', 'rates', 'inflation', 'economic data', '宏观'],
+    aliases: ['fred', 'macro'],
     priority: 'core',
   },
   {
@@ -294,6 +298,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Broker / Trading / 券商交易',
     tags: ['order book', 'liquidity', 'heatmap', 'execution', '盘口'],
+    aliases: ['bookmap', 'orderflow'],
     priority: 'useful',
   },
   {
@@ -375,6 +380,7 @@ export const sites: Site[] = [
     market: '美股',
     category: 'Filings / 公告披露',
     tags: ['filings', '10-k', '10-q', 'disclosures', '公告'],
+    aliases: ['sec', 'edgar', 'filings'],
     priority: 'core',
   },
   {
@@ -650,6 +656,7 @@ export const sites: Site[] = [
     market: '通用工具',
     category: 'Tools / Visualization / 工具可视化',
     tags: ['code', 'repositories', 'open source', 'collaboration', '代码'],
+    aliases: ['gh', 'github'],
     priority: 'core',
   },
   {
@@ -717,6 +724,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Market Data / 行情数据',
     tags: ['A股', '行情', '资金流', '板块', '财报'],
+    aliases: ['dfcf', 'eastmoney', 'dongfangcaifu'],
     priority: 'core',
     noteZh: 'A股行情、资金流、板块、财报和资讯的高频入口。',
   },
@@ -730,6 +738,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Market Data / 行情数据',
     tags: ['A股', '行情', '板块', '热度', '个股资料'],
+    aliases: ['ths', '10jqka', 'tonghuashun'],
     priority: 'core',
     noteZh: '适合快速查看A股行情、板块热度和个股资料。',
   },
@@ -756,6 +765,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'News & Macro / 新闻宏观',
     tags: ['快讯', '政策', '产业新闻', '宏观', 'A股'],
+    aliases: ['cls', 'cailianshe'],
     priority: 'useful',
     noteZh: '适合追踪A股实时快讯、政策变化和产业新闻。',
   },
@@ -782,6 +792,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Filings / 公告披露',
     tags: ['公告', '年报', '半年报', '问询函', '披露'],
+    aliases: ['cninfo', 'juchao'],
     priority: 'core',
     noteZh: 'A股上市公司公告、年报、半年报、问询函等原始披露入口。',
   },
@@ -860,6 +871,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Backtesting / 回测平台',
     tags: ['A股量化', '回测', '因子研究', '模拟交易', 'Python'],
+    aliases: ['jq', 'joinquant'],
     priority: 'core',
     noteZh: 'A股量化学习、策略回测、因子研究和模拟交易常用平台。',
   },
@@ -873,6 +885,7 @@ export const sites: Site[] = [
     market: 'A股',
     category: 'Backtesting / 回测平台',
     tags: ['量化投研', '数据', '回测', '风险归因', '资管'],
+    aliases: ['rq', 'ricequant'],
     priority: 'core',
     noteZh: '量化投研、数据、回测、风险归因和资管系统平台。',
   },

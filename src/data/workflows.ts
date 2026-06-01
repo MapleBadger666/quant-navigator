@@ -20,6 +20,7 @@ export type Workflow = {
   market: Market;
   priority: Priority;
   tags: string[];
+  aliases?: string[];
   isCommon?: boolean;
   description: string;
   descriptionZh: string;
@@ -61,6 +62,7 @@ export const workflows: Workflow[] = [
     market: 'A股',
     priority: 'core',
     tags: ['daily', 'quotes', 'sector', 'news', 'sentiment'],
+    aliases: ['daily', 'open', 'watch', '看盘', '每日'],
     isCommon: true,
     description: 'Open the core quote, sector, index, news, and sentiment portals.',
     descriptionZh: '打开核心行情、板块、指数、快讯和情绪观察入口。',
@@ -74,6 +76,7 @@ export const workflows: Workflow[] = [
     market: 'A股',
     priority: 'core',
     tags: ['filings', 'exchange', 'regulation', 'ir', 'disclosure'],
+    aliases: ['filings', 'announcements', 'cninfo', '公告', '披露'],
     isCommon: true,
     description: 'Jump into filings, exchange announcements, regulator notices, and investor Q&A.',
     descriptionZh: '快速进入公告披露、交易所公告、监管通知和投资者互动问答。',
@@ -87,6 +90,7 @@ export const workflows: Workflow[] = [
     market: 'A股',
     priority: 'core',
     tags: ['quant', 'factor', 'backtest', 'platform', 'research'],
+    aliases: ['quant', 'backtest', 'factor', 'jq', 'rq', '量化'],
     isCommon: true,
     description: 'Launch common China quant research, factor mining, and backtesting platforms.',
     descriptionZh: '打开国内常用量化研究、因子挖掘和回测平台。',
@@ -100,6 +104,7 @@ export const workflows: Workflow[] = [
     market: '美股',
     priority: 'core',
     tags: ['us stocks', 'quotes', 'macro', 'news', 'charts'],
+    aliases: ['us', 'market', 'yf', 'tv', '美股'],
     isCommon: true,
     description: 'Open quotes, charts, macro data, and market news for US/global markets.',
     descriptionZh: '打开美股和全球市场行情、图表、宏观数据与新闻入口。',
@@ -121,6 +126,7 @@ export const workflows: Workflow[] = [
     market: '美股',
     priority: 'useful',
     tags: ['macro', 'rates', 'economics', 'calendar', 'news'],
+    aliases: ['macro', 'fred', 'rates', 'economics', '宏观'],
     description: 'Track macro time series, policy context, economic papers, and global market news.',
     descriptionZh: '跟踪宏观时间序列、政策背景、经济论文和全球市场新闻。',
     siteIds: [
@@ -141,6 +147,7 @@ export const workflows: Workflow[] = [
     market: '美股',
     priority: 'core',
     tags: ['factor', 'asset pricing', 'datasets', 'whitepapers', 'library'],
+    aliases: ['factor', 'fama', 'ken french', 'aqr', '因子'],
     description: 'Open factor datasets, asset-pricing references, and quant research libraries.',
     descriptionZh: '打开因子数据集、资产定价资料和量化研究资料库。',
     siteIds: [
@@ -162,6 +169,7 @@ export const workflows: Workflow[] = [
     market: '通用工具',
     priority: 'core',
     tags: ['backtesting', 'portfolio', 'python', 'optimization', 'toolkit'],
+    aliases: ['backtest', 'portfolio', 'python', 'vectorbt', '回测'],
     isCommon: true,
     description: 'Open popular backtesting and portfolio construction tools.',
     descriptionZh: '打开常用回测、组合构建和策略实验工具。',
@@ -175,6 +183,7 @@ export const workflows: Workflow[] = [
     market: '通用工具',
     priority: 'useful',
     tags: ['papers', 'preprints', 'citations', 'finance', 'research'],
+    aliases: ['papers', 'arxiv', 'ssrn', 'scholar', '论文'],
     description: 'Search finance papers, preprints, citations, and code-linked research.',
     descriptionZh: '检索金融论文、预印本、引用和带代码的研究资料。',
     siteIds: [
@@ -194,6 +203,7 @@ export const workflows: Workflow[] = [
     market: 'A股',
     priority: 'useful',
     tags: ['funds', 'private fund', 'regulation', 'products', 'manager'],
+    aliases: ['fund', 'private fund', 'simuwang', 'amac', '基金', '私募'],
     description: 'Review mutual funds, private funds, regulatory data, and China fund research tools.',
     descriptionZh: '查看公募基金、私募基金、自律监管与基金数据工具。',
     siteIds: ['eastmoney-fund', 'simuwang', 'amac', 'eastmoney', 'choice', 'wind', 'ifind'],
@@ -206,6 +216,7 @@ export const workflows: Workflow[] = [
     market: '加密',
     priority: 'core',
     tags: ['crypto', 'defi', 'on-chain', 'fundamentals', 'exchange'],
+    aliases: ['crypto', 'defi', 'onchain', 'binance', '加密'],
     isCommon: true,
     description: 'Open crypto market, DeFi, on-chain, and fundamentals dashboards.',
     descriptionZh: '打开加密行情、DeFi、链上数据和协议基本面看板。',

@@ -182,8 +182,11 @@ Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要�
 - Two-level filtering: market first, then function category.
 - Bilingual UI: English and 中文.
 - Search across English names, Chinese names, descriptions, categories, tags, and notes.
+- Command Palette opens with `Cmd+K` / `Ctrl+K` to search sites and workflows from anywhere in the app.
 - Guest favorites persist in `localStorage`.
 - Optional Supabase Auth + database sync gives each signed-in user a private favorites list.
+- Pin Board gives the home page a compact quick-launch area for the user's most-used websites.
+- Pin Board pins persist locally with browser or Electron `localStorage` and are separate from favorites.
 - Priority labels: `core`, `useful`, and `optional`.
 - Quick Workflows group research paths by scenario, show bilingual names, market, website count, priority, and tags.
 - Workflow cards can expand their website list, open all included websites, filter the main resource list to those websites, and save workflow favorites.
@@ -204,13 +207,16 @@ src/
   hooks/
     useAuth.ts
     useFavorites.ts
+    usePinnedSites.ts
   lib/
     supabaseClient.ts
   components/
     AuthBar.tsx
     CategoryFilter.tsx
+    CommandPalette.tsx
     MarketTabs.tsx
     Navbar.tsx
+    PinBoard.tsx
     QuickWorkflows.tsx
     SearchBar.tsx
     SiteCard.tsx
@@ -234,9 +240,33 @@ Workflow favorites are also local-only and saved with this key:
 quant_navigator_workflow_favorites
 ```
 
+Pin Board entries are a separate local quick-launch list and are saved with this key:
+
+```text
+quant_navigator_pinned_sites
+```
+
 The app will continue to work without Supabase. In this mode the UI shows that it is using local favorites.
 
 Because local favorites use browser `localStorage`, favorites do not sync across different computers, browsers, or operating-system users. This also means different Windows users on different browsers will not affect each other.
+
+### Pin Board vs Favorites
+
+- Favorites are for long-term resources the user wants to track or review later.
+- Pins are for the home page's fastest launch area.
+- A website can be both favorited and pinned, but the two states are stored and managed independently.
+- Pins are local-only in both Web and Electron builds and do not require Supabase.
+
+## Command Palette
+
+Press `Cmd+K` on macOS or `Ctrl+K` on Windows/Linux to open the Command Palette.
+
+- Search websites and workflows in one place.
+- Press `Enter` on a site result to open that website.
+- Press `Enter` on a workflow result to filter the main website list to that workflow's sites.
+- Workflow results include an explicit `Open all` / `打开全部` button for intentionally opening every website in the workflow.
+- Aliases make short commands work, such as `dfcf` for 东方财富, `cninfo` for 巨潮资讯, `tv` for TradingView, and `fred` for FRED.
+- The palette is front-end only and does not open local folders, local projects, or run shell commands.
 
 ### Multi-User Favorites
 
@@ -334,12 +364,13 @@ Open `src/data/sites.ts` and add a `Site` object:
   market: 'A股',
   category: 'Market Data / 行情数据',
   tags: ['行情', '数据', 'api'],
+  aliases: ['example', 'data'],
   priority: 'useful',
   noteZh: '说明它在投研工作流里的具体用途。'
 }
 ```
 
-Keep `id` unique. Use stable lowercase IDs because workflows refer to sites by `id`.
+Keep `id` unique. Use stable lowercase IDs because workflows refer to sites by `id`. Add `aliases` for common abbreviations, pinyin, ticker-style shorthand, or vendor nicknames that users may type into the Command Palette.
 
 ## Add an A-Share Website
 
@@ -382,6 +413,7 @@ Open `src/data/workflows.ts` and add a workflow:
   market: 'A股',
   priority: 'useful',
   tags: ['行情', '数据', 'daily'],
+  aliases: ['daily', 'watch'],
   description: 'Open a useful set of research websites.',
   descriptionZh: '打开一组常用投研网站。',
   siteIds: ['eastmoney', 'cninfo', 'joinquant']

@@ -4,11 +4,20 @@ import type { Site } from '../data/sites';
 type SiteCardProps = {
   site: Site;
   isFavorite: boolean;
+  isPinned: boolean;
   onToggleFavorite: (siteId: string) => void;
+  onTogglePinned: (siteId: string) => void;
   language: Language;
 };
 
-export function SiteCard({ site, isFavorite, onToggleFavorite, language }: SiteCardProps) {
+export function SiteCard({
+  site,
+  isFavorite,
+  isPinned,
+  onToggleFavorite,
+  onTogglePinned,
+  language,
+}: SiteCardProps) {
   const title = language === 'zh' ? site.nameZh ?? site.name : site.name;
   const subtitle = language === 'zh' && site.nameZh ? site.name : site.nameZh;
   const description = language === 'zh' ? site.descriptionZh ?? site.description : site.description;
@@ -48,28 +57,59 @@ export function SiteCard({ site, isFavorite, onToggleFavorite, language }: SiteC
           <h2 className="mt-4 text-xl font-semibold text-white">{title}</h2>
           {subtitle ? <p className="mt-1 text-sm text-slate-500">{subtitle}</p> : null}
         </div>
-        <button
-          type="button"
-          onClick={() => onToggleFavorite(site.id)}
-          aria-label={
-            isFavorite
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <button
+            type="button"
+            onClick={() => onTogglePinned(site.id)}
+            aria-pressed={isPinned}
+            aria-label={
+              isPinned
+                ? language === 'zh'
+                  ? `取消置顶 ${title}`
+                  : `Unpin ${title}`
+                : language === 'zh'
+                  ? `置顶 ${title}`
+                  : `Pin ${title}`
+            }
+            title={isPinned ? (language === 'zh' ? '取消置顶' : 'Unpin') : language === 'zh' ? '置顶' : 'Pin'}
+            className={[
+              'rounded-full border px-3 py-1.5 text-xs font-semibold transition',
+              isPinned
+                ? 'border-terminal-accent/60 bg-terminal-accent/15 text-terminal-accent'
+                : 'border-white/10 bg-white/[0.04] text-slate-500 hover:border-terminal-accent/50 hover:text-terminal-accent',
+            ].join(' ')}
+          >
+            {isPinned
               ? language === 'zh'
-                ? `取消收藏 ${title}`
-                : `Remove ${title} from favorites`
+                ? '已置顶'
+                : 'Pinned'
               : language === 'zh'
-                ? `收藏 ${title}`
-                : `Add ${title} to favorites`
-          }
-          title={isFavorite ? (language === 'zh' ? '取消收藏' : 'Remove favorite') : language === 'zh' ? '收藏' : 'Add favorite'}
-          className={[
-            'grid h-10 w-10 shrink-0 place-items-center rounded-full border text-xl transition',
-            isFavorite
-              ? 'border-terminal-gold/60 bg-terminal-gold/15 text-terminal-gold'
-              : 'border-white/10 bg-white/[0.04] text-slate-500 hover:border-terminal-gold/50 hover:text-terminal-gold',
-          ].join(' ')}
-        >
-          {isFavorite ? '★' : '☆'}
-        </button>
+                ? '置顶'
+                : 'Pin'}
+          </button>
+          <button
+            type="button"
+            onClick={() => onToggleFavorite(site.id)}
+            aria-label={
+              isFavorite
+                ? language === 'zh'
+                  ? `取消收藏 ${title}`
+                  : `Remove ${title} from favorites`
+                : language === 'zh'
+                  ? `收藏 ${title}`
+                  : `Add ${title} to favorites`
+            }
+            title={isFavorite ? (language === 'zh' ? '取消收藏' : 'Remove favorite') : language === 'zh' ? '收藏' : 'Add favorite'}
+            className={[
+              'grid h-10 w-10 place-items-center rounded-full border text-xl transition',
+              isFavorite
+                ? 'border-terminal-gold/60 bg-terminal-gold/15 text-terminal-gold'
+                : 'border-white/10 bg-white/[0.04] text-slate-500 hover:border-terminal-gold/50 hover:text-terminal-gold',
+            ].join(' ')}
+          >
+            {isFavorite ? '★' : '☆'}
+          </button>
+        </div>
       </div>
 
       <p className="mt-3 text-sm leading-6 text-slate-300">{description}</p>
