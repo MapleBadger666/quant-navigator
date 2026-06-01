@@ -107,6 +107,74 @@ npm run dev
 http://localhost:5173/
 ```
 
+## Windows 离线版
+
+Quant Navigator also supports an Electron desktop build for Windows. This keeps the Web version unchanged, but allows Windows users to download an `.exe` and open the app without Vercel, proxy tools, Node.js, or command-line setup.
+
+### 普通用户
+
+1. Download the Quant Navigator Windows package from GitHub Actions artifacts or a GitHub Release.
+2. Installer version: double-click the `.exe` and follow the installer.
+3. Portable version: double-click the `.exe` to run directly.
+4. Node.js is not required.
+5. Command-line usage is not required.
+6. Vercel access is not required.
+7. The app can start offline because the UI is bundled into the desktop app.
+8. Clicking website links opens the system default browser, not an internal Electron browser window.
+
+### 开发者
+
+Run Electron in development mode:
+
+```bash
+npm run electron:dev
+```
+
+Build Windows installer and portable packages:
+
+```bash
+npm run electron:build:win
+```
+
+Build only the portable target:
+
+```bash
+npm run electron:build:win-portable
+```
+
+Recommended path: use GitHub Actions on `windows-latest` to build Windows packages. Cross-building Windows packages locally from macOS can be unstable because Electron Builder may need Windows-specific tooling and signing behavior.
+
+### GitHub Actions 下载 Windows 包
+
+This repository includes `.github/workflows/windows-release.yml`.
+
+To download the package:
+
+1. Push to `main`, or manually run the `Build Windows Desktop App` workflow from GitHub Actions.
+2. Open the completed workflow run.
+3. Download the artifact named `quant-navigator-windows`.
+4. Extract the artifact zip.
+5. Run the `.exe`.
+
+### Windows 桌面版收藏说明
+
+If Supabase is not configured, favorites are stored in Electron local storage on the current machine. Different computers do not sync favorites automatically. To sync favorites across machines, configure Supabase and sign in with the same account.
+
+## 中国大陆用户访问方案
+
+Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要代理或出现不稳定。国内用户建议使用腾讯云 EdgeOne Pages、腾讯云 COS 静态网站或阿里云 OSS 静态网站部署 `dist/`。
+
+- 海外用户：优先使用 Vercel。
+- 中国大陆用户：建议使用腾讯云或阿里云静态托管。
+- 离线 Windows 用户：可以使用本地静态包，后续也可以封装 Electron 桌面版。
+
+未配置 Supabase 时，收藏仍保存在用户自己的浏览器 `localStorage` 中。国内部署和海外部署的数据互不影响；只有当多个部署配置同一个 Supabase 项目时，登录账号收藏才会同步到同一份远程数据。
+
+更多国内部署细节见：
+
+- [中国大陆可访问部署方案](docs/deploy-china.md)
+- [Deployment Checklist](docs/deployment-checklist.md)
+
 ## Features
 
 - Two-level filtering: market first, then function category.

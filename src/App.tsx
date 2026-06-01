@@ -41,6 +41,7 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState<'All' | Category>(allCategory);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [language, setLanguage] = useState<Language>(() => getInitialLanguage());
+  const runtime = window.electronAPI?.isElectron ? 'desktop' : 'web';
   const auth = useAuth();
   const favorites = useFavorites(auth.user);
 
@@ -123,6 +124,7 @@ function App() {
         favoriteCount={favorites.favoriteCount}
         language={language}
         onLanguageChange={setLanguage}
+        runtime={runtime}
         authContent={
           <AuthBar
             language={language}
