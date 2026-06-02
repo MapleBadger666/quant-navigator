@@ -14,6 +14,7 @@ type CommandPaletteProps = {
   sites: Site[];
   workflows: Workflow[];
   sitesById: Map<string, Site>;
+  favoriteSiteIds: Set<string>;
   language: Language;
   onFilterWorkflow: (workflow: Workflow) => void;
 };
@@ -54,6 +55,7 @@ export function CommandPalette({
   sites,
   workflows,
   sitesById,
+  favoriteSiteIds,
   language,
   onFilterWorkflow,
 }: CommandPaletteProps) {
@@ -345,6 +347,8 @@ export function CommandPalette({
                     : workflowGroupLabels[item.workflow.group][language];
                 const priority =
                   item.type === 'site' ? item.site.priority : item.workflow.priority;
+                const isFavoriteSite =
+                  item.type === 'site' && favoriteSiteIds.has(item.site.id);
 
                 return (
                   <div
@@ -379,6 +383,11 @@ export function CommandPalette({
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
+                      {isFavoriteSite ? (
+                        <span className="rounded-full border border-terminal-gold/45 bg-terminal-gold/10 px-2 py-1 text-[11px] font-semibold text-terminal-gold">
+                          {language === 'zh' ? '已收藏' : 'Favorited'}
+                        </span>
+                      ) : null}
                       {item.type === 'workflow' ? (
                         <button
                           type="button"

@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AccessFilter, type AccessFilterValue } from './components/AccessFilter';
 import { AuthBar } from './components/AuthBar';
 import { CategoryFilter } from './components/CategoryFilter';
 import { CommandPalette } from './components/CommandPalette';
+import { FavoritesSection } from './components/FavoritesSection';
 import { MarketTabs } from './components/MarketTabs';
 import { Navbar } from './components/Navbar';
 import { OnboardingModal } from './components/OnboardingModal';
@@ -77,6 +78,9 @@ function App() {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => !getOnboardingSeen());
   const [customShortcutMessage, setCustomShortcutMessage] = useState<string | null>(null);
   const [customShortcutError, setCustomShortcutError] = useState<string | null>(null);
+  const [isFavoritesSectionHighlighted, setIsFavoritesSectionHighlighted] = useState(false);
+  const favoritesSectionRef = useRef<HTMLElement | null>(null);
+  const favoritesHighlightTimeoutRef = useRef<number | null>(null);
   const runtime = window.electronAPI?.isElectron ? 'desktop' : 'web';
   const auth = useAuth();
   const favorites = useFavorites(auth.user);
@@ -87,6 +91,40 @@ function App() {
   useEffect(() => {
     saveLanguagePreference(language);
   }, [language]);
+
+  useEffect(() => {
+    return () => {
+      if (favoritesHighlightTimeoutRef.current) {
+        window.clearTimeout(favoritesHighlightTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const highlightFavoritesSection = useCallback(() => {
+    if (favoritesHighlightTimeoutRef.current) {
+      window.clearTimeout(favoritesHighlightTimeoutRef.current);
+    }
+
+    setIsFavoritesSectionHighlighted(true);
+    favoritesHighlightTimeoutRef.current = window.setTimeout(() => {
+      setIsFavoritesSectionHighlighted(false);
+    }, 1800);
+  }, []);
+
+  const scrollToFavoritesSection = useCallback(() => {
+    window.requestAnimationFrame(() => {
+      favoritesSectionRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+      highlightFavoritesSection();
+    });
+  }, [highlightFavoritesSection]);
+
+  const toggleFavoritesOnly = useCallback(() => {
+    setShowFavoritesOnly((current) => !current);
+    scrollToFavoritesSection();
+  }, [scrollToFavoritesSection]);
 
   const allSites = useMemo(
     () => [...builtInSites, ...customShortcuts.shortcuts],
@@ -99,6 +137,27 @@ function App() {
         .map((siteId) => sitesById.get(siteId))
         .filter((site): site is Site => Boolean(site)),
     [pinned.pinnedIds, sitesById],
+  );
+  const favoriteSites = useMemo(
+    () =>
+      allSites
+        .filter((site) => favorites.favoriteIds.has(site.id))
+        .sort((first, second) => {
+          const priorityDifference = priorityRank[first.priority] - priorityRank[second.priority];
+
+          if (priorityDifference !== 0) {
+            return priorityDifference;
+          }
+
+          const marketDifference = first.market.localeCompare(second.market, language);
+
+          if (marketDifference !== 0) {
+            return marketDifference;
+          }
+
+          return (first.nameZh ?? first.name).localeCompare(second.nameZh ?? second.name, language);
+        }),
+    [allSites, favorites.favoriteIds, language],
   );
 
   const filteredSites = useMemo(() => {
@@ -414,6 +473,7 @@ function App() {
         favoriteCount={favorites.favoriteCount}
         language={language}
         onLanguageChange={setLanguage}
+        onFavoritesClick={scrollToFavoritesSection}
         onOpenSettings={() => setIsSettingsOpen(true)}
         runtime={runtime}
         authContent={
@@ -470,6 +530,7 @@ function App() {
         sites={allSites}
         workflows={workflows}
         sitesById={sitesById}
+        favoriteSiteIds={favorites.favoriteIds}
         language={language}
         onFilterWorkflow={filterWorkflowSites}
       />
@@ -536,6 +597,15 @@ function App() {
               onTogglePinned={pinned.togglePinned}
               onClearPinned={pinned.clearPinned}
             />
+            <FavoritesSection
+              ref={favoritesSectionRef}
+              favoriteSites={favoriteSites}
+              isFavoritesOnly={showFavoritesOnly}
+              isHighlighted={isFavoritesSectionHighlighted}
+              language={language}
+              onToggleFavoritesOnly={toggleFavoritesOnly}
+              onToggleFavorite={favorites.toggleFavorite}
+            />
             <MarketTabs
               selectedMarket={selectedMarket}
               onSelectMarket={setSelectedMarket}
@@ -592,18 +662,6 @@ function App() {
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-slate-500">
               {language === 'zh' ? '收藏优先 · core 优先 · 分类排序' : 'Favorites first · core first · category sorted'}
             </p>
-            <button
-              type="button"
-              onClick={() => setShowFavoritesOnly((current) => !current)}
-              className={[
-                'w-fit rounded-lg border px-3 py-2 text-xs font-semibold transition',
-                showFavoritesOnly
-                  ? 'border-terminal-gold/60 bg-terminal-gold/15 text-terminal-gold'
-                  : 'border-white/10 bg-white/[0.04] text-slate-400 hover:border-terminal-gold/40 hover:text-terminal-gold',
-              ].join(' ')}
-            >
-              {language === 'zh' ? '只看收藏' : 'Favorites only'}
-            </button>
             {favorites.loading ? (
               <p className="mt-1 text-xs text-slate-500">
                 {language === 'zh' ? '正在加载收藏…' : 'Loading favorites...'}

@@ -6,6 +6,7 @@ type NavbarProps = {
   favoriteCount: number;
   language: Language;
   onLanguageChange: (language: Language) => void;
+  onFavoritesClick: () => void;
   onOpenSettings: () => void;
   authContent: ReactNode;
   runtime: 'web' | 'desktop';
@@ -16,6 +17,7 @@ export function Navbar({
   favoriteCount,
   language,
   onLanguageChange,
+  onFavoritesClick,
   onOpenSettings,
   authContent,
   runtime,
@@ -74,10 +76,15 @@ export function Navbar({
             <span className="font-mono text-terminal-accent">{totalSites}</span>{' '}
             {language === 'zh' ? '网站' : 'sites'}
           </div>
-          <div className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300">
-            <span className="font-mono text-terminal-gold">{favoriteCount}</span>{' '}
-            {language === 'zh' ? '收藏' : 'favorites'}
-          </div>
+          <button
+            type="button"
+            onClick={onFavoritesClick}
+            aria-label={language === 'zh' ? `查看收藏网站，共 ${favoriteCount} 个` : `View favorite sites, ${favoriteCount} total`}
+            className="rounded-full border border-terminal-gold/25 bg-terminal-gold/10 px-3 py-1.5 text-xs text-terminal-gold transition hover:border-terminal-gold/60 hover:bg-terminal-gold/15"
+          >
+            {language === 'zh' ? '收藏' : 'Favorites'}{' '}
+            <span className="font-mono">{favoriteCount}</span>
+          </button>
           <div className="rounded-full border border-terminal-accent/20 bg-terminal-accent/10 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.18em] text-terminal-accent">
             {language === 'zh' ? '本地纯前端运行' : 'Local front-end only'}
           </div>

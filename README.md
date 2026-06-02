@@ -222,6 +222,7 @@ Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要�
 - Custom Shortcuts join built-in sites in search, filters, Pin Board, favorites, Command Palette, and result counts.
 - Guest favorites persist in `localStorage`.
 - Optional Supabase Auth + database sync gives each signed-in user a private favorites list.
+- Favorite Sites shows favorited websites in a compact home section for long-term tracked resources.
 - Pin Board gives the home page a compact quick-launch area for the user's most-used websites.
 - Pin Board pins persist locally with browser or Electron `localStorage` and are separate from favorites.
 - Priority labels: `core`, `useful`, and `optional`.
@@ -309,6 +310,22 @@ quant_navigator_pinned_sites
 The app will continue to work without Supabase. In this mode the UI shows that it is using local favorites.
 
 Because local favorites use browser `localStorage`, favorites do not sync across different computers, browsers, or operating-system users. This also means different Windows users on different browsers will not affect each other.
+
+### Favorite Sites Section
+
+Favorited websites appear in the `收藏网站` / `Favorite Sites` section near the top of the home page. This section uses compact cards so favorites are easy to scan without duplicating the full resource list.
+
+Click the top `收藏 X` / `Favorites X` status pill to jump directly to the Favorite Sites section. The page scrolls to the section and briefly highlights it, even when there are no favorites yet, so users can see the empty state and learn where favorites will appear.
+
+Each favorite card shows the site name, market, category, priority, optional access hints, an `Open` / `打开` action, and an `Unfavorite` / `取消收藏` action. The section shows up to 8 favorite cards; if there are more, use `只看收藏` / `Favorites only` to view the full favorite collection in the main site list.
+
+`只看收藏` / `Favorites only` reuses the existing favorite state and stacks with every other filter:
+
+- Market, Category, and Access filters.
+- Search.
+- Workflow filters.
+
+Favorites remain separate from Pin Board pins: favorites are a long-term resource library, while pins are the fastest home-page launch entries. In local guest mode favorites are stored in `localStorage`; when Supabase favorites sync is configured and the user is signed in, favorites continue to follow the existing remote sync behavior.
 
 ### Pin Board vs Favorites
 
