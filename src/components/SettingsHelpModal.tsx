@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Language } from '../data/markets';
 import {
+  CUSTOM_SHORTCUTS_KEY,
   GUEST_FAVORITES_KEY,
   PINNED_SITES_KEY,
   WORKFLOW_FAVORITES_KEY,
@@ -15,6 +16,10 @@ type SettingsHelpModalProps = {
   onClearPinned: () => void;
   onClearWorkflowFavorites: () => void;
   onResetLocalSettings: () => void;
+  onExportCustomShortcuts: () => void;
+  onImportCustomShortcuts: (file: File) => void | Promise<void>;
+  customShortcutMessage: string | null;
+  customShortcutError: string | null;
 };
 
 export function SettingsHelpModal({
@@ -26,7 +31,13 @@ export function SettingsHelpModal({
   onClearPinned,
   onClearWorkflowFavorites,
   onResetLocalSettings,
+  onExportCustomShortcuts,
+  onImportCustomShortcuts,
+  customShortcutMessage,
+  customShortcutError,
 }: SettingsHelpModalProps) {
+  const importInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -58,11 +69,27 @@ export function SettingsHelpModal({
     }
   };
 
+  const openImportFilePicker = () => {
+    if (importInputRef.current) {
+      importInputRef.current.value = '';
+      importInputRef.current.click();
+    }
+  };
+
+  const importFile = (file: File | undefined) => {
+    if (!file) {
+      return;
+    }
+
+    void onImportCustomShortcuts(file);
+  };
+
   const helpItems =
     language === 'zh'
       ? [
           ['Quant Navigator 是什么', '一个量化投研网站快速启动器，帮助你查找、筛选、置顶和打开常用网页资源。'],
           ['如何搜索网站', '使用首页搜索框，输入中文名、英文名、网址、标签、aliases 或访问条件。'],
+          ['自定义快捷入口', '添加自己的网页入口后，会和内置网站一起参与搜索、筛选、收藏、置顶和命令栏。'],
           ['Market / Category / Access 筛选', '市场、功能分类和访问条件可以叠加，和搜索、工作流筛选同时生效。'],
           ['Quick Workflows', '按投研场景组织网站集合，可以查看包含网站、筛选这些网站，或明确点击打开全部。'],
           ['Pin Board', '把最高频的网站置顶到首页顶部，作为最快速的启动区。'],
@@ -74,6 +101,7 @@ export function SettingsHelpModal({
       : [
           ['What Quant Navigator Is', 'A quick-launch assistant for quant research websites: search, filter, pin, favorite, and open web resources.'],
           ['Search Sites', 'Use the home search field with English names, Chinese names, URLs, tags, aliases, or access labels.'],
+          ['Custom Shortcuts', 'Add your own web shortcuts; they join built-in sites in search, filters, favorites, pins, and the Command Palette.'],
           ['Market / Category / Access Filters', 'Market, category, and access filters stack with search and workflow filters.'],
           ['Quick Workflows', 'Workflow cards group websites by research scenario. View sites, filter them, or explicitly open all.'],
           ['Pin Board', 'Pin your most-used sites to the home page for fast launch.'],
@@ -199,6 +227,37 @@ export function SettingsHelpModal({
               </button>
               <button
                 type="button"
+                onClick={onExportCustomShortcuts}
+                className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:border-terminal-accent/40 hover:text-terminal-accent"
+              >
+                {language === 'zh' ? '导出自定义快捷入口' : 'Export Custom Shortcuts'}
+              </button>
+              <button
+                type="button"
+                onClick={openImportFilePicker}
+                className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:border-terminal-accent/40 hover:text-terminal-accent"
+              >
+                {language === 'zh' ? '导入自定义快捷入口' : 'Import Custom Shortcuts'}
+              </button>
+              <input
+                ref={importInputRef}
+                type="file"
+                accept="application/json,.json"
+                className="hidden"
+                onChange={(event) => importFile(event.target.files?.[0])}
+              />
+              {customShortcutMessage ? (
+                <p className="rounded-xl border border-terminal-accent/25 bg-terminal-accent/10 px-3 py-2 text-xs text-terminal-accent">
+                  {customShortcutMessage}
+                </p>
+              ) : null}
+              {customShortcutError ? (
+                <p className="rounded-xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+                  {customShortcutError}
+                </p>
+              ) : null}
+              <button
+                type="button"
                 onClick={confirmReset}
                 className="w-full rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-left text-sm font-semibold text-red-200 transition hover:border-red-300/60 hover:bg-red-500/15"
               >
@@ -214,6 +273,7 @@ export function SettingsHelpModal({
                 <p>{GUEST_FAVORITES_KEY}</p>
                 <p>{PINNED_SITES_KEY}</p>
                 <p>{WORKFLOW_FAVORITES_KEY}</p>
+                <p>{CUSTOM_SHORTCUTS_KEY}</p>
               </div>
             </div>
           </section>

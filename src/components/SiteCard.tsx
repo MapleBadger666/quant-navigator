@@ -7,6 +7,8 @@ type SiteCardProps = {
   isPinned: boolean;
   onToggleFavorite: (siteId: string) => void;
   onTogglePinned: (siteId: string) => void;
+  onEditCustomSite?: (site: Site) => void;
+  onDeleteCustomSite?: (site: Site) => void;
   language: Language;
 };
 
@@ -16,11 +18,16 @@ export function SiteCard({
   isPinned,
   onToggleFavorite,
   onTogglePinned,
+  onEditCustomSite,
+  onDeleteCustomSite,
   language,
 }: SiteCardProps) {
   const title = language === 'zh' ? site.nameZh ?? site.name : site.name;
   const subtitle = language === 'zh' && site.nameZh ? site.name : site.nameZh;
-  const description = language === 'zh' ? site.descriptionZh ?? site.description : site.description;
+  const description =
+    language === 'zh'
+      ? site.descriptionZh ?? site.description ?? ''
+      : site.description ?? site.descriptionZh ?? '';
   const note = language === 'zh' ? site.noteZh ?? site.note : site.note ?? site.noteZh;
   const category = categoryLabels[site.category][language];
   const priority = priorityLabels[site.priority][language];
@@ -53,6 +60,11 @@ export function SiteCard({
             >
               {priority}
             </p>
+            {site.isCustom ? (
+              <p className="inline-flex rounded-full border border-terminal-accent/30 bg-terminal-accent/10 px-3 py-1 text-xs font-semibold text-terminal-accent">
+                {language === 'zh' ? '自定义' : 'Custom'}
+              </p>
+            ) : null}
           </div>
           {site.access && site.access.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -124,7 +136,9 @@ export function SiteCard({
         </div>
       </div>
 
-      <p className="mt-3 text-sm leading-6 text-slate-300">{description}</p>
+      {description ? (
+        <p className="mt-3 text-sm leading-6 text-slate-300">{description}</p>
+      ) : null}
 
       {note ? (
         <p className="mt-3 rounded-xl border border-terminal-accent/15 bg-terminal-accent/10 px-3 py-2 text-sm leading-6 text-slate-300">
@@ -151,6 +165,25 @@ export function SiteCard({
       >
         {language === 'zh' ? '打开' : 'Open'}
       </a>
+
+      {site.isCustom ? (
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={() => onEditCustomSite?.(site)}
+            className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-terminal-accent/40 hover:text-terminal-accent"
+          >
+            {language === 'zh' ? '编辑' : 'Edit'}
+          </button>
+          <button
+            type="button"
+            onClick={() => onDeleteCustomSite?.(site)}
+            className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-200 transition hover:border-red-300/60 hover:bg-red-500/15"
+          >
+            {language === 'zh' ? '删除' : 'Delete'}
+          </button>
+        </div>
+      ) : null}
     </article>
   );
 }

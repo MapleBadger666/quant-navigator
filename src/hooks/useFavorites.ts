@@ -14,6 +14,7 @@ type FavoritesState = {
   isSupabaseConfigured: boolean;
   isRemote: boolean;
   toggleFavorite: (siteId: string) => Promise<void>;
+  removeFavorite: (siteId: string) => Promise<void>;
   clearLocalFavorites: () => void;
   importGuestFavorites: () => Promise<{ importedCount: number; success: boolean }>;
   clearFavoritesMessage: () => void;
@@ -184,6 +185,40 @@ export function useFavorites(user: User | null): FavoritesState {
     return { importedCount: guestFavoriteIds.length, success: true };
   }, [user]);
 
+  const removeFavorite = useCallback(
+    async (siteId: string) => {
+      setError(null);
+      setMessage(null);
+
+      if (!user || !supabase) {
+        setFavoriteIds((currentIds) => {
+          const nextIds = new Set(currentIds);
+          nextIds.delete(siteId);
+          return nextIds;
+        });
+        return;
+      }
+
+      const { error: deleteError } = await supabase
+        .from('user_favorites')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('site_id', siteId);
+
+      if (deleteError) {
+        setError(deleteError.message);
+        return;
+      }
+
+      setFavoriteIds((currentIds) => {
+        const nextIds = new Set(currentIds);
+        nextIds.delete(siteId);
+        return nextIds;
+      });
+    },
+    [user],
+  );
+
   const clearLocalFavorites = useCallback(() => {
     saveFavoriteSiteIds([]);
 
@@ -202,6 +237,7 @@ export function useFavorites(user: User | null): FavoritesState {
       isSupabaseConfigured,
       isRemote,
       toggleFavorite,
+      removeFavorite,
       clearLocalFavorites,
       importGuestFavorites,
       clearFavoritesMessage: () => setMessage(null),
@@ -216,6 +252,7 @@ export function useFavorites(user: User | null): FavoritesState {
       loading,
       message,
       mode,
+      removeFavorite,
       toggleFavorite,
     ],
   );

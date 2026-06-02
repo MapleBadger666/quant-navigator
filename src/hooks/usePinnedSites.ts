@@ -27,6 +27,13 @@ export function usePinnedSites() {
           return nextIds;
         });
       },
+      removePinned: (siteId: string) => {
+        setPinnedIds((currentIds) => {
+          const nextIds = new Set(currentIds);
+          nextIds.delete(siteId);
+          return nextIds;
+        });
+      },
       clearPinned: () => setPinnedIds(new Set()),
     }),
     [pinnedIds],

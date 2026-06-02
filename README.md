@@ -217,6 +217,8 @@ Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要�
 - Command Palette opens with `Cmd+K` / `Ctrl+K` to search sites and workflows from anywhere in the app.
 - Access Tags show manual access hints such as Mainland CN, Global, Proxy likely, Login, Paid, Institutional, and Free.
 - Settings / Help explains the app, shortcuts, local storage, and lets users clear local favorites, pins, and workflow favorites.
+- Custom Shortcuts let users add, edit, delete, import, and export their own web shortcuts without changing code.
+- Custom Shortcuts join built-in sites in search, filters, Pin Board, favorites, Command Palette, and result counts.
 - Guest favorites persist in `localStorage`.
 - Optional Supabase Auth + database sync gives each signed-in user a private favorites list.
 - Pin Board gives the home page a compact quick-launch area for the user's most-used websites.
@@ -240,6 +242,7 @@ src/
     workflows.ts
   hooks/
     useAuth.ts
+    useCustomShortcuts.ts
     useFavorites.ts
     usePinnedSites.ts
     useWorkflowFavorites.ts
@@ -256,6 +259,7 @@ src/
     QuickWorkflows.tsx
     SearchBar.tsx
     SettingsHelpModal.tsx
+    ShortcutEditorModal.tsx
     SiteCard.tsx
   utils/
     storage.ts
@@ -293,6 +297,36 @@ Because local favorites use browser `localStorage`, favorites do not sync across
 - Pins are for the home page's fastest launch area.
 - A website can be both favorited and pinned, but the two states are stored and managed independently.
 - Pins are local-only in both Web and Electron builds and do not require Supabase.
+
+## Custom Shortcuts
+
+Custom Shortcuts are user-created website entries. They are for web URLs only, keeping Quant Navigator a quick-launch assistant rather than a local project manager.
+
+To add one, click `添加快捷入口` / `Add Shortcut` near the top of the home page, fill in at least a Chinese or English name, an `http://` or `https://` URL, market, and category, then save. The default market is `通用工具` / Tools, the default category is `Tools / Visualization / 工具可视化`, and the default priority is `useful`.
+
+After saving, the shortcut appears immediately with built-in sites and participates in:
+
+- Main search.
+- Market, Category, and Access filters.
+- Pin Board.
+- Favorites.
+- Command Palette.
+- Site result counts.
+
+To edit or delete a custom shortcut, use the `编辑` / `Edit` or `删除` / `Delete` buttons on that custom site card. Built-in site cards do not show delete controls. Deleting a custom shortcut also removes its local pin and local/remote favorite state for that shortcut id.
+
+To back up or move custom shortcuts, open `设置 / 帮助` / `Settings / Help`:
+
+- `导出自定义快捷入口` / `Export Custom Shortcuts` downloads a JSON file.
+- `导入自定义快捷入口` / `Import Custom Shortcuts` reads a JSON file, validates fields, regenerates duplicate ids, and skips duplicate URLs by default unless the user chooses to keep them.
+
+Custom shortcuts are stored in current browser or Electron `localStorage` with this key:
+
+```text
+quant_navigator_custom_shortcuts
+```
+
+They are not uploaded to Supabase or any server. They do not automatically sync across browsers, computers, or operating-system users. To move them, export JSON from one environment and import it in another.
 
 ## Command Palette
 
@@ -337,6 +371,9 @@ The Settings section can clear:
 - Local favorites: `quant_navigator_guest_favorites`
 - Pin Board entries: `quant_navigator_pinned_sites`
 - Workflow favorites: `quant_navigator_workflow_favorites`
+- Custom shortcuts: `quant_navigator_custom_shortcuts`
+
+The Settings section can also export and import custom shortcuts as JSON. Import validation never changes built-in sites.
 
 `Reset all local settings` / `重置全部本地设置` clears all local keys after a confirmation prompt. It only affects the current browser or Electron app localStorage. It does not open folders, manage local projects, or execute local commands.
 

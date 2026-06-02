@@ -5,7 +5,7 @@ export type Site = {
   name: string;
   nameZh?: string;
   url: string;
-  description: string;
+  description?: string;
   descriptionZh?: string;
   market: Market;
   category: Category;
@@ -15,6 +15,13 @@ export type Site = {
   priority: Priority;
   note?: string;
   noteZh?: string;
+  isCustom?: boolean;
+};
+
+export type CustomShortcut = Omit<Site, 'isCustom'> & {
+  isCustom: true;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export const sites: Site[] = [

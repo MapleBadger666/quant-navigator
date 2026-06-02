@@ -9,6 +9,7 @@ import { PinBoard } from './components/PinBoard';
 import { QuickWorkflows } from './components/QuickWorkflows';
 import { SearchBar } from './components/SearchBar';
 import { SettingsHelpModal } from './components/SettingsHelpModal';
+import { ShortcutEditorModal } from './components/ShortcutEditorModal';
 import { SiteCard } from './components/SiteCard';
 import {
   allMarket,
@@ -21,9 +22,10 @@ import {
   type MarketFilter,
   type Priority,
 } from './data/markets';
-import { sites, type Site } from './data/sites';
+import { sites as builtInSites, type CustomShortcut, type Site } from './data/sites';
 import { workflows, type Workflow } from './data/workflows';
 import { useAuth } from './hooks/useAuth';
+import { useCustomShortcuts, type ShortcutDraft } from './hooks/useCustomShortcuts';
 import { useFavorites } from './hooks/useFavorites';
 import { usePinnedSites } from './hooks/usePinnedSites';
 import { useWorkflowFavorites } from './hooks/useWorkflowFavorites';
@@ -61,13 +63,22 @@ function App() {
   const [workflowSiteFilter, setWorkflowSiteFilter] = useState<WorkflowSiteFilter | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [language, setLanguage] = useState<Language>(() => getInitialLanguage());
+  const [isShortcutEditorOpen, setIsShortcutEditorOpen] = useState(false);
+  const [editingShortcut, setEditingShortcut] = useState<CustomShortcut | null>(null);
+  const [customShortcutMessage, setCustomShortcutMessage] = useState<string | null>(null);
+  const [customShortcutError, setCustomShortcutError] = useState<string | null>(null);
   const runtime = window.electronAPI?.isElectron ? 'desktop' : 'web';
   const auth = useAuth();
   const favorites = useFavorites(auth.user);
   const pinned = usePinnedSites();
   const workflowFavorites = useWorkflowFavorites();
+  const customShortcuts = useCustomShortcuts(builtInSites, language);
 
-  const sitesById = useMemo(() => new Map(sites.map((site) => [site.id, site])), []);
+  const allSites = useMemo(
+    () => [...builtInSites, ...customShortcuts.shortcuts],
+    [customShortcuts.shortcuts],
+  );
+  const sitesById = useMemo(() => new Map(allSites.map((site) => [site.id, site])), [allSites]);
   const pinnedSites = useMemo(
     () =>
       [...pinned.pinnedIds]
@@ -79,7 +90,7 @@ function App() {
   const filteredSites = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    return sites
+    return allSites
       .filter((site) => !workflowSiteFilter || workflowSiteFilter.siteIds.has(site.id))
       .filter((site) => selectedMarket === allMarket || site.market === selectedMarket)
       .filter((site) => selectedCategory === allCategory || site.category === selectedCategory)
@@ -147,6 +158,7 @@ function App() {
         return firstFavorite ? -1 : 1;
       });
   }, [
+    allSites,
     favorites.favoriteIds,
     language,
     query,
@@ -193,12 +205,89 @@ function App() {
     favorites.clearLocalFavorites();
     pinned.clearPinned();
     workflowFavorites.clearWorkflowFavorites();
+    customShortcuts.clearShortcuts();
+    setWorkflowSiteFilter(null);
+    setCustomShortcutMessage(null);
+    setCustomShortcutError(null);
+  };
+
+  const openNewShortcutEditor = () => {
+    setEditingShortcut(null);
+    setIsShortcutEditorOpen(true);
+  };
+
+  const closeShortcutEditor = () => {
+    setIsShortcutEditorOpen(false);
+    setEditingShortcut(null);
+  };
+
+  const saveShortcut = (shortcutId: string | null, draft: ShortcutDraft) => {
+    customShortcuts.saveShortcut(shortcutId, draft);
+    setCustomShortcutMessage(language === 'zh' ? '已保存自定义快捷入口。' : 'Custom shortcut saved.');
+    setCustomShortcutError(null);
+  };
+
+  const editCustomSite = (site: Site) => {
+    const shortcut = customShortcuts.shortcuts.find((item) => item.id === site.id);
+
+    if (!shortcut) {
+      return;
+    }
+
+    setEditingShortcut(shortcut);
+    setIsShortcutEditorOpen(true);
+  };
+
+  const deleteCustomSite = async (site: Site) => {
+    const confirmed = window.confirm(
+      language === 'zh'
+        ? `确定删除自定义快捷入口“${site.nameZh ?? site.name}”吗？`
+        : `Delete custom shortcut "${site.name}"?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    customShortcuts.deleteShortcut(site.id);
+    pinned.removePinned(site.id);
+    await favorites.removeFavorite(site.id);
+
+    if (workflowSiteFilter?.siteIds.has(site.id)) {
+      setWorkflowSiteFilter(null);
+    }
+
+    setCustomShortcutMessage(language === 'zh' ? '已删除自定义快捷入口。' : 'Custom shortcut deleted.');
+    setCustomShortcutError(null);
+  };
+
+  const exportCustomShortcuts = () => {
+    customShortcuts.exportShortcuts();
+    setCustomShortcutMessage(language === 'zh' ? '已导出自定义快捷入口 JSON。' : 'Custom shortcuts exported.');
+    setCustomShortcutError(null);
+  };
+
+  const importCustomShortcuts = async (file: File) => {
+    const result = await customShortcuts.importShortcuts(file);
+
+    if (!result.success) {
+      setCustomShortcutError(result.error ?? (language === 'zh' ? '导入失败。' : 'Import failed.'));
+      setCustomShortcutMessage(null);
+      return;
+    }
+
+    setCustomShortcutError(null);
+    setCustomShortcutMessage(
+      language === 'zh'
+        ? `导入 ${result.importedCount} 个快捷入口，跳过 ${result.skippedDuplicateUrlCount} 个重复 URL。`
+        : `Imported ${result.importedCount} shortcuts and skipped ${result.skippedDuplicateUrlCount} duplicate URLs.`,
+    );
   };
 
   return (
     <div className="min-h-screen text-slate-100">
       <Navbar
-        totalSites={sites.length}
+        totalSites={allSites.length}
         favoriteCount={favorites.favoriteCount}
         language={language}
         onLanguageChange={setLanguage}
@@ -231,10 +320,22 @@ function App() {
         onClearPinned={pinned.clearPinned}
         onClearWorkflowFavorites={workflowFavorites.clearWorkflowFavorites}
         onResetLocalSettings={resetLocalSettings}
+        onExportCustomShortcuts={exportCustomShortcuts}
+        onImportCustomShortcuts={importCustomShortcuts}
+        customShortcutMessage={customShortcutMessage}
+        customShortcutError={customShortcutError}
+      />
+
+      <ShortcutEditorModal
+        isOpen={isShortcutEditorOpen}
+        language={language}
+        shortcut={editingShortcut}
+        onClose={closeShortcutEditor}
+        onSave={saveShortcut}
       />
 
       <CommandPalette
-        sites={sites}
+        sites={allSites}
         workflows={workflows}
         sitesById={sitesById}
         language={language}
@@ -243,18 +344,27 @@ function App() {
 
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <section className="mb-9">
-          <div className="max-w-4xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-terminal-accent/20 bg-terminal-accent/10 px-3 py-1 font-mono text-xs uppercase tracking-[0.22em] text-terminal-accent">
-              {language === 'zh' ? '中文私募投研终端' : 'Local quant command center'}
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-4xl">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-terminal-accent/20 bg-terminal-accent/10 px-3 py-1 font-mono text-xs uppercase tracking-[0.22em] text-terminal-accent">
+                {language === 'zh' ? '中文私募投研终端' : 'Local quant command center'}
+              </div>
+              <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-6xl">
+                {language === 'zh' ? '量化导航 Quant Navigator' : 'Quant Navigator'}
+              </h1>
+              <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
+                {language === 'zh'
+                  ? 'A股、美股、港股、加密与量化研究工作台'
+                  : 'Research, Data, Backtesting, Trading, and Market Intelligence Hub'}
+              </p>
             </div>
-            <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-6xl">
-              {language === 'zh' ? '量化导航 Quant Navigator' : 'Quant Navigator'}
-            </h1>
-            <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
-              {language === 'zh'
-                ? 'A股、美股、港股、加密与量化研究工作台'
-                : 'Research, Data, Backtesting, Trading, and Market Intelligence Hub'}
-            </p>
+            <button
+              type="button"
+              onClick={openNewShortcutEditor}
+              className="w-fit rounded-xl border border-terminal-accent/35 bg-terminal-accent/10 px-4 py-3 text-sm font-semibold text-terminal-accent transition hover:border-terminal-accent hover:bg-terminal-accent hover:text-terminal-950"
+            >
+              {language === 'zh' ? '添加快捷入口' : 'Add Shortcut'}
+            </button>
           </div>
 
           <div className="mt-8 space-y-5">
@@ -303,7 +413,7 @@ function App() {
               {language === 'zh' ? '当前显示' : 'Showing'}{' '}
               <span className="font-mono text-terminal-accent">{filteredSites.length}</span>{' '}
               {language === 'zh' ? '个 / 共' : 'of'}{' '}
-              <span className="font-mono text-white">{sites.length}</span>{' '}
+              <span className="font-mono text-white">{allSites.length}</span>{' '}
               {language === 'zh' ? '个资源' : 'resources'}
             </p>
             {!favorites.isRemote ? (
@@ -368,6 +478,8 @@ function App() {
                 isPinned={pinned.pinnedIds.has(site.id)}
                 onToggleFavorite={favorites.toggleFavorite}
                 onTogglePinned={pinned.togglePinned}
+                onEditCustomSite={editCustomSite}
+                onDeleteCustomSite={deleteCustomSite}
                 language={language}
               />
             ))}
