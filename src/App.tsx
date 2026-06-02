@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AccessFilter, type AccessFilterValue } from './components/AccessFilter';
 import { AuthBar } from './components/AuthBar';
 import { CategoryFilter } from './components/CategoryFilter';
@@ -29,7 +29,13 @@ import { useCustomShortcuts, type ShortcutDraft } from './hooks/useCustomShortcu
 import { useFavorites } from './hooks/useFavorites';
 import { usePinnedSites } from './hooks/usePinnedSites';
 import { useWorkflowFavorites } from './hooks/useWorkflowFavorites';
-import { clearAllLocalSettings } from './utils/storage';
+import {
+  clearAllLocalSettings,
+  createLocalSettingsBackup,
+  getLanguagePreference,
+  parseLocalSettingsBackup,
+  saveLanguagePreference,
+} from './utils/storage';
 
 const allCategory = 'All';
 
@@ -51,7 +57,7 @@ const getInitialLanguage = (): Language => {
     return 'zh';
   }
 
-  return window.navigator.language.toLowerCase().startsWith('zh') ? 'zh' : 'zh';
+  return getLanguagePreference() ?? (window.navigator.language.toLowerCase().startsWith('zh') ? 'zh' : 'zh');
 };
 
 function App() {
@@ -73,6 +79,10 @@ function App() {
   const pinned = usePinnedSites();
   const workflowFavorites = useWorkflowFavorites();
   const customShortcuts = useCustomShortcuts(builtInSites, language);
+
+  useEffect(() => {
+    saveLanguagePreference(language);
+  }, [language]);
 
   const allSites = useMemo(
     () => [...builtInSites, ...customShortcuts.shortcuts],
@@ -284,6 +294,81 @@ function App() {
     );
   };
 
+  const exportAllSettings = () => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const backup = createLocalSettingsBackup({
+      favorites: favorites.favoriteIds,
+      pinnedSites: pinned.pinnedIds,
+      favoriteWorkflows: workflowFavorites.workflowFavoriteIds,
+      customShortcuts: customShortcuts.shortcuts,
+      preferences: { language },
+    });
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `quant-navigator-settings-${backup.exportedAt.slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    setCustomShortcutMessage(language === 'zh' ? '已导出全部本地设置 JSON。' : 'All local settings exported.');
+    setCustomShortcutError(null);
+  };
+
+  const importAllSettings = async (file: File) => {
+    try {
+      const parsed = parseLocalSettingsBackup(JSON.parse(await file.text()));
+
+      if (!parsed) {
+        setCustomShortcutError(
+          language === 'zh'
+            ? '导入失败：文件不是有效的 Quant Navigator 设置备份，或数据结构不完整。'
+            : 'Import failed: this is not a valid Quant Navigator settings backup, or its data structure is incomplete.',
+        );
+        setCustomShortcutMessage(null);
+        return;
+      }
+
+      const confirmed = window.confirm(
+        language === 'zh'
+          ? '导入全部设置会覆盖当前本地收藏、置顶、工作流收藏、自定义快捷入口和语言偏好。确定继续吗？'
+          : 'Importing all settings will overwrite local favorites, pins, workflow favorites, custom shortcuts, and language preference. Continue?',
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      favorites.replaceFavorites(parsed.favorites);
+      pinned.replacePinned(parsed.pinnedSites);
+      workflowFavorites.replaceWorkflowFavorites(parsed.favoriteWorkflows);
+      customShortcuts.replaceShortcuts(parsed.customShortcuts);
+
+      if (parsed.preferences.language) {
+        setLanguage(parsed.preferences.language);
+      }
+
+      clearFilters();
+      setCustomShortcutError(null);
+      setCustomShortcutMessage(
+        language === 'zh'
+          ? '已恢复全部本地设置。'
+          : 'All local settings restored.',
+      );
+    } catch {
+      setCustomShortcutError(
+        language === 'zh'
+          ? '导入失败：无法解析 JSON 文件，请确认文件内容有效。'
+          : 'Import failed: the JSON file could not be parsed.',
+      );
+      setCustomShortcutMessage(null);
+    }
+  };
+
   return (
     <div className="min-h-screen text-slate-100">
       <Navbar
@@ -322,6 +407,8 @@ function App() {
         onResetLocalSettings={resetLocalSettings}
         onExportCustomShortcuts={exportCustomShortcuts}
         onImportCustomShortcuts={importCustomShortcuts}
+        onExportAllSettings={exportAllSettings}
+        onImportAllSettings={importAllSettings}
         customShortcutMessage={customShortcutMessage}
         customShortcutError={customShortcutError}
       />

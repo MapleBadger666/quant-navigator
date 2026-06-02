@@ -34,6 +34,9 @@ export function usePinnedSites() {
           return nextIds;
         });
       },
+      replacePinned: (siteIds: Iterable<string>) => {
+        setPinnedIds(toPinnedSet([...siteIds]));
+      },
       clearPinned: () => setPinnedIds(new Set()),
     }),
     [pinnedIds],

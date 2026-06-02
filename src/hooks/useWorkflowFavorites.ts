@@ -29,6 +29,9 @@ export function useWorkflowFavorites() {
           return nextIds;
         });
       },
+      replaceWorkflowFavorites: (workflowIds: Iterable<string>) => {
+        setWorkflowFavoriteIds(toWorkflowFavoriteSet([...workflowIds]));
+      },
       clearWorkflowFavorites: () => setWorkflowFavoriteIds(new Set()),
     }),
     [workflowFavoriteIds],

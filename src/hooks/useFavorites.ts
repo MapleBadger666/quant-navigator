@@ -15,6 +15,7 @@ type FavoritesState = {
   isRemote: boolean;
   toggleFavorite: (siteId: string) => Promise<void>;
   removeFavorite: (siteId: string) => Promise<void>;
+  replaceFavorites: (siteIds: Iterable<string>) => void;
   clearLocalFavorites: () => void;
   importGuestFavorites: () => Promise<{ importedCount: number; success: boolean }>;
   clearFavoritesMessage: () => void;
@@ -227,6 +228,12 @@ export function useFavorites(user: User | null): FavoritesState {
     }
   }, [mode]);
 
+  const replaceFavorites = useCallback((siteIds: Iterable<string>) => {
+    const nextIds = toFavoriteSet([...siteIds]);
+    saveFavoriteSiteIds(nextIds);
+    setFavoriteIds(nextIds);
+  }, []);
+
   return useMemo(
     () => ({
       favoriteIds,
@@ -238,6 +245,7 @@ export function useFavorites(user: User | null): FavoritesState {
       isRemote,
       toggleFavorite,
       removeFavorite,
+      replaceFavorites,
       clearLocalFavorites,
       importGuestFavorites,
       clearFavoritesMessage: () => setMessage(null),
@@ -253,6 +261,7 @@ export function useFavorites(user: User | null): FavoritesState {
       message,
       mode,
       removeFavorite,
+      replaceFavorites,
       toggleFavorite,
     ],
   );

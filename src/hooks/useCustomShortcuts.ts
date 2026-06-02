@@ -147,6 +147,10 @@ export function useCustomShortcuts(baseSites: Site[], language: Language) {
     setShortcuts([]);
   };
 
+  const replaceShortcuts = (nextShortcuts: CustomShortcut[]) => {
+    setShortcuts(nextShortcuts);
+  };
+
   const exportShortcuts = () => {
     if (typeof window === 'undefined') {
       return;
@@ -270,6 +274,7 @@ export function useCustomShortcuts(baseSites: Site[], language: Language) {
     saveShortcut,
     deleteShortcut,
     clearShortcuts,
+    replaceShortcuts,
     exportShortcuts,
     importShortcuts,
   };

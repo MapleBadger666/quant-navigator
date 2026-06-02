@@ -3,6 +3,7 @@ import type { Language } from '../data/markets';
 import {
   CUSTOM_SHORTCUTS_KEY,
   GUEST_FAVORITES_KEY,
+  LANGUAGE_PREFERENCE_KEY,
   PINNED_SITES_KEY,
   WORKFLOW_FAVORITES_KEY,
 } from '../utils/storage';
@@ -18,6 +19,8 @@ type SettingsHelpModalProps = {
   onResetLocalSettings: () => void;
   onExportCustomShortcuts: () => void;
   onImportCustomShortcuts: (file: File) => void | Promise<void>;
+  onExportAllSettings: () => void;
+  onImportAllSettings: (file: File) => void | Promise<void>;
   customShortcutMessage: string | null;
   customShortcutError: string | null;
 };
@@ -33,10 +36,13 @@ export function SettingsHelpModal({
   onResetLocalSettings,
   onExportCustomShortcuts,
   onImportCustomShortcuts,
+  onExportAllSettings,
+  onImportAllSettings,
   customShortcutMessage,
   customShortcutError,
 }: SettingsHelpModalProps) {
   const importInputRef = useRef<HTMLInputElement>(null);
+  const importAllInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -76,6 +82,13 @@ export function SettingsHelpModal({
     }
   };
 
+  const openImportAllFilePicker = () => {
+    if (importAllInputRef.current) {
+      importAllInputRef.current.value = '';
+      importAllInputRef.current.click();
+    }
+  };
+
   const importFile = (file: File | undefined) => {
     if (!file) {
       return;
@@ -84,12 +97,21 @@ export function SettingsHelpModal({
     void onImportCustomShortcuts(file);
   };
 
+  const importAllFile = (file: File | undefined) => {
+    if (!file) {
+      return;
+    }
+
+    void onImportAllSettings(file);
+  };
+
   const helpItems =
     language === 'zh'
       ? [
           ['Quant Navigator 是什么', '一个量化投研网站快速启动器，帮助你查找、筛选、置顶和打开常用网页资源。'],
           ['如何搜索网站', '使用首页搜索框，输入中文名、英文名、网址、标签、aliases 或访问条件。'],
           ['自定义快捷入口', '添加自己的网页入口后，会和内置网站一起参与搜索、筛选、收藏、置顶和命令栏。'],
+          ['备份与迁移', '导出全部设置为 JSON，可在新浏览器、新电脑或 Windows 离线版导入恢复。'],
           ['Market / Category / Access 筛选', '市场、功能分类和访问条件可以叠加，和搜索、工作流筛选同时生效。'],
           ['Quick Workflows', '按投研场景组织网站集合，可以查看包含网站、筛选这些网站，或明确点击打开全部。'],
           ['Pin Board', '把最高频的网站置顶到首页顶部，作为最快速的启动区。'],
@@ -102,6 +124,7 @@ export function SettingsHelpModal({
           ['What Quant Navigator Is', 'A quick-launch assistant for quant research websites: search, filter, pin, favorite, and open web resources.'],
           ['Search Sites', 'Use the home search field with English names, Chinese names, URLs, tags, aliases, or access labels.'],
           ['Custom Shortcuts', 'Add your own web shortcuts; they join built-in sites in search, filters, favorites, pins, and the Command Palette.'],
+          ['Backup & Migration', 'Export all settings as JSON, then import them in a new browser, computer, or Windows offline build.'],
           ['Market / Category / Access Filters', 'Market, category, and access filters stack with search and workflow filters.'],
           ['Quick Workflows', 'Workflow cards group websites by research scenario. View sites, filter them, or explicitly open all.'],
           ['Pin Board', 'Pin your most-used sites to the home page for fast launch.'],
@@ -227,6 +250,27 @@ export function SettingsHelpModal({
               </button>
               <button
                 type="button"
+                onClick={onExportAllSettings}
+                className="w-full rounded-xl border border-terminal-accent/25 bg-terminal-accent/10 px-4 py-3 text-left text-sm font-semibold text-terminal-accent transition hover:border-terminal-accent/60 hover:bg-terminal-accent hover:text-terminal-950"
+              >
+                {language === 'zh' ? '导出全部设置' : 'Export All Settings'}
+              </button>
+              <button
+                type="button"
+                onClick={openImportAllFilePicker}
+                className="w-full rounded-xl border border-terminal-accent/25 bg-terminal-accent/10 px-4 py-3 text-left text-sm font-semibold text-terminal-accent transition hover:border-terminal-accent/60 hover:bg-terminal-accent hover:text-terminal-950"
+              >
+                {language === 'zh' ? '导入全部设置' : 'Import All Settings'}
+              </button>
+              <input
+                ref={importAllInputRef}
+                type="file"
+                accept="application/json,.json"
+                className="hidden"
+                onChange={(event) => importAllFile(event.target.files?.[0])}
+              />
+              <button
+                type="button"
                 onClick={onExportCustomShortcuts}
                 className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:border-terminal-accent/40 hover:text-terminal-accent"
               >
@@ -274,6 +318,7 @@ export function SettingsHelpModal({
                 <p>{PINNED_SITES_KEY}</p>
                 <p>{WORKFLOW_FAVORITES_KEY}</p>
                 <p>{CUSTOM_SHORTCUTS_KEY}</p>
+                <p>{LANGUAGE_PREFERENCE_KEY}</p>
               </div>
             </div>
           </section>

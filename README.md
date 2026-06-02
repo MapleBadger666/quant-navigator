@@ -328,6 +328,41 @@ quant_navigator_custom_shortcuts
 
 They are not uploaded to Supabase or any server. They do not automatically sync across browsers, computers, or operating-system users. To move them, export JSON from one environment and import it in another.
 
+## Backup & Migration
+
+Use `设置 / 帮助` / `Settings / Help` for a full local settings backup:
+
+- `导出全部设置` / `Export All Settings` downloads one JSON file for the current browser or Electron app.
+- `导入全部设置` / `Import All Settings` restores that JSON into the current browser or Electron app.
+
+The full backup includes:
+
+- Favorite site ids.
+- Pin Board site ids.
+- Favorite workflow ids.
+- Custom Shortcuts.
+- Preferences such as language.
+- Metadata fields such as `app`, `version`, and `exportedAt`.
+
+The JSON shape is:
+
+```json
+{
+  "app": "Quant Navigator",
+  "version": "0.1.0",
+  "exportedAt": "2026-06-02T00:00:00.000Z",
+  "favorites": [],
+  "pinnedSites": [],
+  "favoriteWorkflows": [],
+  "customShortcuts": [],
+  "preferences": {}
+}
+```
+
+Import validates the `app` field and required array structure before applying changes. It asks for confirmation because it overwrites current local favorites, pins, workflow favorites, custom shortcuts, and preferences. Built-in sites are never changed by import.
+
+Backups are local JSON files only. Quant Navigator does not upload backup data, contact a backend, open local folders, or run local commands. To migrate to a new browser, computer, or Windows offline build, export JSON in the old environment and import it in the new one.
+
 ## Command Palette
 
 Press `Cmd+K` on macOS or `Ctrl+K` on Windows/Linux to open the Command Palette.
@@ -372,8 +407,9 @@ The Settings section can clear:
 - Pin Board entries: `quant_navigator_pinned_sites`
 - Workflow favorites: `quant_navigator_workflow_favorites`
 - Custom shortcuts: `quant_navigator_custom_shortcuts`
+- Language preference: `quant_navigator_language`
 
-The Settings section can also export and import custom shortcuts as JSON. Import validation never changes built-in sites.
+The Settings section can also export/import custom shortcuts alone or export/import all local settings as JSON. Import validation never changes built-in sites.
 
 `Reset all local settings` / `重置全部本地设置` clears all local keys after a confirmation prompt. It only affects the current browser or Electron app localStorage. It does not open folders, manage local projects, or execute local commands.
 

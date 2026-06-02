@@ -4,6 +4,7 @@ import {
   markets,
   type AccessTag,
   type Category,
+  type Language,
   type Market,
   type Priority,
 } from '../data/markets';
@@ -13,18 +14,46 @@ export const GUEST_FAVORITES_KEY = 'quant_navigator_guest_favorites';
 export const PINNED_SITES_KEY = 'quant_navigator_pinned_sites';
 export const WORKFLOW_FAVORITES_KEY = 'quant_navigator_workflow_favorites';
 export const CUSTOM_SHORTCUTS_KEY = 'quant_navigator_custom_shortcuts';
+export const LANGUAGE_PREFERENCE_KEY = 'quant_navigator_language';
 export const LEGACY_FAVORITES_KEY = 'quant-navigator:favorites';
+export const SETTINGS_BACKUP_APP = 'Quant Navigator';
+export const SETTINGS_BACKUP_VERSION = '0.1.0';
 
 export const LOCAL_STORAGE_KEYS = [
   GUEST_FAVORITES_KEY,
   PINNED_SITES_KEY,
   WORKFLOW_FAVORITES_KEY,
   CUSTOM_SHORTCUTS_KEY,
+  LANGUAGE_PREFERENCE_KEY,
   LEGACY_FAVORITES_KEY,
 ] as const;
 
+export type UserPreferences = {
+  language?: Language;
+};
+
+export type LocalSettingsBackup = {
+  app: typeof SETTINGS_BACKUP_APP;
+  version: string;
+  exportedAt: string;
+  favorites: string[];
+  pinnedSites: string[];
+  favoriteWorkflows: string[];
+  customShortcuts: CustomShortcut[];
+  preferences: UserPreferences;
+};
+
+export type LocalSettingsInput = {
+  favorites: Iterable<string>;
+  pinnedSites: Iterable<string>;
+  favoriteWorkflows: Iterable<string>;
+  customShortcuts: CustomShortcut[];
+  preferences?: UserPreferences;
+};
+
 const priorities: Priority[] = ['core', 'useful', 'optional'];
 const validMarkets = markets.filter((market): market is Market => market !== '全部');
+const languages: Language[] = ['en', 'zh'];
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -52,6 +81,18 @@ const toAccessList = (value: unknown) =>
   toStringList(value).filter((item): item is AccessTag =>
     accessTags.includes(item as AccessTag),
   );
+
+const toUniqueStringList = (value: unknown) => [...new Set(toStringList(value))];
+
+const normalizePreferences = (value: unknown): UserPreferences => {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  return languages.includes(value.language as Language)
+    ? { language: value.language as Language }
+    : {};
+};
 
 export const normalizeCustomShortcut = (value: unknown): CustomShortcut | null => {
   if (!isRecord(value)) {
@@ -195,6 +236,78 @@ export const saveCustomShortcuts = (shortcuts: CustomShortcut[]) => {
   }
 
   window.localStorage.setItem(CUSTOM_SHORTCUTS_KEY, JSON.stringify(shortcuts));
+};
+
+export const getLanguagePreference = (): Language | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const stored = window.localStorage.getItem(LANGUAGE_PREFERENCE_KEY);
+  return languages.includes(stored as Language) ? (stored as Language) : null;
+};
+
+export const saveLanguagePreference = (language: Language) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.localStorage.setItem(LANGUAGE_PREFERENCE_KEY, language);
+};
+
+export const createLocalSettingsBackup = ({
+  favorites,
+  pinnedSites,
+  favoriteWorkflows,
+  customShortcuts,
+  preferences = {},
+}: LocalSettingsInput): LocalSettingsBackup => ({
+  app: SETTINGS_BACKUP_APP,
+  version: SETTINGS_BACKUP_VERSION,
+  exportedAt: new Date().toISOString(),
+  favorites: [...new Set([...favorites].filter(Boolean))],
+  pinnedSites: [...new Set([...pinnedSites].filter(Boolean))],
+  favoriteWorkflows: [...new Set([...favoriteWorkflows].filter(Boolean))],
+  customShortcuts,
+  preferences,
+});
+
+export const parseLocalSettingsBackup = (value: unknown): LocalSettingsBackup | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  if (value.app !== SETTINGS_BACKUP_APP) {
+    return null;
+  }
+
+  const rawCustomShortcuts = value.customShortcuts;
+
+  if (
+    !Array.isArray(value.favorites) ||
+    !Array.isArray(value.pinnedSites) ||
+    !Array.isArray(value.favoriteWorkflows) ||
+    !Array.isArray(rawCustomShortcuts)
+  ) {
+    return null;
+  }
+
+  const customShortcuts = parseCustomShortcuts(rawCustomShortcuts);
+
+  if (customShortcuts.length !== rawCustomShortcuts.length) {
+    return null;
+  }
+
+  return {
+    app: SETTINGS_BACKUP_APP,
+    version: toOptionalString(value.version) ?? SETTINGS_BACKUP_VERSION,
+    exportedAt: toOptionalString(value.exportedAt) ?? new Date().toISOString(),
+    favorites: toUniqueStringList(value.favorites),
+    pinnedSites: toUniqueStringList(value.pinnedSites),
+    favoriteWorkflows: toUniqueStringList(value.favoriteWorkflows),
+    customShortcuts,
+    preferences: normalizePreferences(value.preferences),
+  };
 };
 
 export const clearAllLocalSettings = () => {
