@@ -191,7 +191,30 @@ function App() {
     showFavoritesOnly ||
     Boolean(workflowSiteFilter);
 
+  useEffect(() => {
+    if (!workflowSiteFilter) {
+      return;
+    }
+
+    const hasValidWorkflowSite = [...workflowSiteFilter.siteIds].some((siteId) =>
+      sitesById.has(siteId),
+    );
+
+    if (!hasValidWorkflowSite) {
+      setWorkflowSiteFilter(null);
+    }
+  }, [sitesById, workflowSiteFilter]);
+
+  const clearWorkflowFilter = () => {
+    setWorkflowSiteFilter(null);
+  };
+
   const filterWorkflowSites = (workflow: Workflow) => {
+    if (workflowSiteFilter?.workflowId === workflow.id) {
+      clearWorkflowFilter();
+      return;
+    }
+
     setWorkflowSiteFilter({
       workflowId: workflow.id,
       title: workflow.title,
@@ -279,7 +302,7 @@ function App() {
     await favorites.removeFavorite(site.id);
 
     if (workflowSiteFilter?.siteIds.has(site.id)) {
-      setWorkflowSiteFilter(null);
+      clearWorkflowFilter();
     }
 
     setCustomShortcutMessage(language === 'zh' ? '已删除自定义快捷入口。' : 'Custom shortcut deleted.');
@@ -478,6 +501,34 @@ function App() {
 
           <div className="mt-8 space-y-5">
             <SearchBar value={query} onChange={setQuery} language={language} />
+            {workflowSiteFilter ? (
+              <section className="rounded-2xl border border-terminal-accent/35 bg-terminal-accent/10 p-4 shadow-terminal">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="font-mono text-xs uppercase tracking-[0.2em] text-terminal-accent">
+                      Active Workflow Filter
+                    </p>
+                    <h2 className="mt-2 text-base font-semibold text-white">
+                      {language === 'zh'
+                        ? `当前筛选工作流：${workflowSiteFilter.titleZh}`
+                        : `Active workflow filter: ${workflowSiteFilter.title}`}
+                    </h2>
+                    <p className="mt-1 text-sm text-slate-400">
+                      {language === 'zh'
+                        ? '仅显示该工作流包含的网站'
+                        : 'Showing only sites in this workflow'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={clearWorkflowFilter}
+                    className="w-fit rounded-xl border border-terminal-accent/45 bg-terminal-accent/15 px-4 py-3 text-sm font-semibold text-terminal-accent transition hover:bg-terminal-accent hover:text-terminal-950"
+                  >
+                    {language === 'zh' ? '清除筛选' : 'Clear filter'}
+                  </button>
+                </div>
+              </section>
+            ) : null}
             <PinBoard
               pinnedSites={pinnedSites}
               pinnedCount={pinned.pinnedCount}
@@ -535,22 +586,6 @@ function App() {
                     ? 'Supabase 未配置，当前使用本地收藏模式'
                     : 'Supabase is not configured. Using local favorites.'}
               </p>
-            ) : null}
-            {workflowSiteFilter ? (
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <span className="rounded-full border border-terminal-accent/30 bg-terminal-accent/10 px-3 py-1 text-xs text-terminal-accent">
-                  {language === 'zh'
-                    ? `工作流筛选：${workflowSiteFilter.titleZh}`
-                    : `Workflow filter: ${workflowSiteFilter.title}`}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setWorkflowSiteFilter(null)}
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-slate-400 transition hover:border-terminal-accent/40 hover:text-terminal-accent"
-                >
-                  {language === 'zh' ? '清除工作流筛选' : 'Clear workflow filter'}
-                </button>
-              </div>
             ) : null}
           </div>
           <div className="flex flex-col gap-2 text-left sm:items-end sm:text-right">

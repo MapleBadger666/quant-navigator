@@ -276,7 +276,13 @@ export function QuickWorkflows({
                               : 'border-white/10 bg-white/[0.04] text-slate-300 hover:border-terminal-gold/40 hover:text-terminal-gold',
                           ].join(' ')}
                         >
-                          {language === 'zh' ? '筛选这些' : 'Filter Sites'}
+                          {isFiltering
+                            ? language === 'zh'
+                              ? '取消筛选'
+                              : 'Clear filter'
+                            : language === 'zh'
+                              ? '筛选这些'
+                              : 'Filter these'}
                         </button>
                       </div>
 
