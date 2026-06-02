@@ -4,6 +4,7 @@ import {
   CUSTOM_SHORTCUTS_KEY,
   GUEST_FAVORITES_KEY,
   LANGUAGE_PREFERENCE_KEY,
+  ONBOARDING_SEEN_KEY,
   PINNED_SITES_KEY,
   WORKFLOW_FAVORITES_KEY,
 } from '../utils/storage';
@@ -21,6 +22,7 @@ type SettingsHelpModalProps = {
   onImportCustomShortcuts: (file: File) => void | Promise<void>;
   onExportAllSettings: () => void;
   onImportAllSettings: (file: File) => void | Promise<void>;
+  onReplayOnboarding: () => void;
   customShortcutMessage: string | null;
   customShortcutError: string | null;
 };
@@ -38,6 +40,7 @@ export function SettingsHelpModal({
   onImportCustomShortcuts,
   onExportAllSettings,
   onImportAllSettings,
+  onReplayOnboarding,
   customShortcutMessage,
   customShortcutError,
 }: SettingsHelpModalProps) {
@@ -250,6 +253,13 @@ export function SettingsHelpModal({
               </button>
               <button
                 type="button"
+                onClick={onReplayOnboarding}
+                className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:border-terminal-accent/40 hover:text-terminal-accent"
+              >
+                {language === 'zh' ? '重新查看新手引导' : 'Replay Onboarding'}
+              </button>
+              <button
+                type="button"
                 onClick={onExportAllSettings}
                 className="w-full rounded-xl border border-terminal-accent/25 bg-terminal-accent/10 px-4 py-3 text-left text-sm font-semibold text-terminal-accent transition hover:border-terminal-accent/60 hover:bg-terminal-accent hover:text-terminal-950"
               >
@@ -319,6 +329,7 @@ export function SettingsHelpModal({
                 <p>{WORKFLOW_FAVORITES_KEY}</p>
                 <p>{CUSTOM_SHORTCUTS_KEY}</p>
                 <p>{LANGUAGE_PREFERENCE_KEY}</p>
+                <p>{ONBOARDING_SEEN_KEY}</p>
               </div>
             </div>
           </section>

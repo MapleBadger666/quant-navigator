@@ -216,6 +216,7 @@ Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要�
 - Search across English names, Chinese names, descriptions, categories, tags, and notes.
 - Command Palette opens with `Cmd+K` / `Ctrl+K` to search sites and workflows from anywhere in the app.
 - Access Tags show manual access hints such as Mainland CN, Global, Proxy likely, Login, Paid, Institutional, and Free.
+- First Run Onboarding introduces markets, Quick Workflows, Pin Board, Command Palette, and backup/restore.
 - Settings / Help explains the app, shortcuts, local storage, and lets users clear local favorites, pins, and workflow favorites.
 - Custom Shortcuts let users add, edit, delete, import, and export their own web shortcuts without changing code.
 - Custom Shortcuts join built-in sites in search, filters, Pin Board, favorites, Command Palette, and result counts.
@@ -229,6 +230,24 @@ Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要�
 - Workflow favorites persist locally with browser or Electron `localStorage`.
 - The app remains front-end only. Supabase is optional and configured through environment variables.
 - No local folder opening, local project opening, local command execution, or backend service is included.
+
+## First Run Onboarding
+
+New users see a five-step onboarding modal the first time they open Quant Navigator:
+
+- Choose a market: A-Shares, US Stocks, Hong Kong, Crypto, or Tools.
+- Use Quick Workflows to launch common research flows.
+- Pin frequent sites to the Pin Board.
+- Press `Cmd/Ctrl + K` for the Command Palette.
+- Use Settings / Help to export backups and restore settings.
+
+The onboarding can be skipped or completed with `开始使用` / `Get Started`. After that, it is hidden with this localStorage key:
+
+```text
+quant_navigator_onboarding_seen
+```
+
+Users can replay it from `设置 / 帮助` / `Settings / Help` with `重新查看新手引导` / `Replay Onboarding`.
 
 ## Project Structure
 
@@ -408,8 +427,9 @@ The Settings section can clear:
 - Workflow favorites: `quant_navigator_workflow_favorites`
 - Custom shortcuts: `quant_navigator_custom_shortcuts`
 - Language preference: `quant_navigator_language`
+- Onboarding seen flag: `quant_navigator_onboarding_seen`
 
-The Settings section can also export/import custom shortcuts alone or export/import all local settings as JSON. Import validation never changes built-in sites.
+The Settings section can also replay onboarding, export/import custom shortcuts alone, or export/import all local settings as JSON. Import validation never changes built-in sites.
 
 `Reset all local settings` / `重置全部本地设置` clears all local keys after a confirmation prompt. It only affects the current browser or Electron app localStorage. It does not open folders, manage local projects, or execute local commands.
 

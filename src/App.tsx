@@ -5,6 +5,7 @@ import { CategoryFilter } from './components/CategoryFilter';
 import { CommandPalette } from './components/CommandPalette';
 import { MarketTabs } from './components/MarketTabs';
 import { Navbar } from './components/Navbar';
+import { OnboardingModal } from './components/OnboardingModal';
 import { PinBoard } from './components/PinBoard';
 import { QuickWorkflows } from './components/QuickWorkflows';
 import { SearchBar } from './components/SearchBar';
@@ -33,8 +34,10 @@ import {
   clearAllLocalSettings,
   createLocalSettingsBackup,
   getLanguagePreference,
+  getOnboardingSeen,
   parseLocalSettingsBackup,
   saveLanguagePreference,
+  saveOnboardingSeen,
 } from './utils/storage';
 
 const allCategory = 'All';
@@ -71,6 +74,7 @@ function App() {
   const [language, setLanguage] = useState<Language>(() => getInitialLanguage());
   const [isShortcutEditorOpen, setIsShortcutEditorOpen] = useState(false);
   const [editingShortcut, setEditingShortcut] = useState<CustomShortcut | null>(null);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => !getOnboardingSeen());
   const [customShortcutMessage, setCustomShortcutMessage] = useState<string | null>(null);
   const [customShortcutError, setCustomShortcutError] = useState<string | null>(null);
   const runtime = window.electronAPI?.isElectron ? 'desktop' : 'web';
@@ -217,8 +221,19 @@ function App() {
     workflowFavorites.clearWorkflowFavorites();
     customShortcuts.clearShortcuts();
     setWorkflowSiteFilter(null);
+    setIsOnboardingOpen(true);
     setCustomShortcutMessage(null);
     setCustomShortcutError(null);
+  };
+
+  const dismissOnboarding = () => {
+    saveOnboardingSeen(true);
+    setIsOnboardingOpen(false);
+  };
+
+  const replayOnboarding = () => {
+    setIsSettingsOpen(false);
+    setIsOnboardingOpen(true);
   };
 
   const openNewShortcutEditor = () => {
@@ -409,8 +424,15 @@ function App() {
         onImportCustomShortcuts={importCustomShortcuts}
         onExportAllSettings={exportAllSettings}
         onImportAllSettings={importAllSettings}
+        onReplayOnboarding={replayOnboarding}
         customShortcutMessage={customShortcutMessage}
         customShortcutError={customShortcutError}
+      />
+
+      <OnboardingModal
+        isOpen={isOnboardingOpen}
+        language={language}
+        onDismiss={dismissOnboarding}
       />
 
       <ShortcutEditorModal

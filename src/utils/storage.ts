@@ -15,6 +15,7 @@ export const PINNED_SITES_KEY = 'quant_navigator_pinned_sites';
 export const WORKFLOW_FAVORITES_KEY = 'quant_navigator_workflow_favorites';
 export const CUSTOM_SHORTCUTS_KEY = 'quant_navigator_custom_shortcuts';
 export const LANGUAGE_PREFERENCE_KEY = 'quant_navigator_language';
+export const ONBOARDING_SEEN_KEY = 'quant_navigator_onboarding_seen';
 export const LEGACY_FAVORITES_KEY = 'quant-navigator:favorites';
 export const SETTINGS_BACKUP_APP = 'Quant Navigator';
 export const SETTINGS_BACKUP_VERSION = '0.1.0';
@@ -25,6 +26,7 @@ export const LOCAL_STORAGE_KEYS = [
   WORKFLOW_FAVORITES_KEY,
   CUSTOM_SHORTCUTS_KEY,
   LANGUAGE_PREFERENCE_KEY,
+  ONBOARDING_SEEN_KEY,
   LEGACY_FAVORITES_KEY,
 ] as const;
 
@@ -253,6 +255,22 @@ export const saveLanguagePreference = (language: Language) => {
   }
 
   window.localStorage.setItem(LANGUAGE_PREFERENCE_KEY, language);
+};
+
+export const getOnboardingSeen = () => {
+  if (typeof window === 'undefined') {
+    return true;
+  }
+
+  return window.localStorage.getItem(ONBOARDING_SEEN_KEY) === 'true';
+};
+
+export const saveOnboardingSeen = (seen: boolean) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.localStorage.setItem(ONBOARDING_SEEN_KEY, seen ? 'true' : 'false');
 };
 
 export const createLocalSettingsBackup = ({
