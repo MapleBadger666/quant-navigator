@@ -24,6 +24,18 @@ const viewLabels: Record<WorkflowView, { en: string; zh: string }> = {
   favorites: { en: 'Favorite Workflows', zh: '已收藏工作流' },
 };
 
+const getWorkflowGridClass = (workflowCount: number) => {
+  if (workflowCount === 1) {
+    return 'grid grid-cols-1 gap-3';
+  }
+
+  if (workflowCount === 2) {
+    return 'grid grid-cols-1 gap-3 lg:grid-cols-2';
+  }
+
+  return 'grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3';
+};
+
 export function QuickWorkflows({
   workflows,
   sitesById,
@@ -148,7 +160,7 @@ export function QuickWorkflows({
                   </p>
                 </div>
               </div>
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              <div className={getWorkflowGridClass(groupWorkflows.length)}>
                 {groupWorkflows.map((workflow) => {
                   const workflowSites = workflow.siteIds
                     .map((siteId) => sitesById.get(siteId))
