@@ -1,622 +1,187 @@
 # Quant Navigator
 
-Quant Navigator is a React + TypeScript + Vite + Tailwind CSS quick-launch assistant for quantitative research websites. It helps users find, filter, favorite, and open web resources for A-shares, US stocks, Hong Kong stocks, crypto, macro research, factor research, papers, and backtesting tools.
+[Live demo](https://quant-navigator-two.vercel.app) ·
+[User guide](docs/user-guide.md) ·
+[Deployment checklist](docs/deployment-checklist.md)
 
-It is intentionally not a local project manager, local code executor, or command runner. The product surface is website navigation and quick workflow launching only.
+Quant Navigator is a bilingual React/TypeScript research-resource navigator for
+market data, factor research, academic papers, backtesting tools, and
+quantitative-research workflows. It combines structured market/category
+filtering, full-text search, customizable shortcuts, saved resources, and
+workflow-based navigation in deployable web and desktop interfaces.
 
-## Run Locally
+The project is a productivity application for organizing research resources. It
+does not run local code, manage local projects, execute commands, or implement a
+trading/backtesting engine.
 
-Install dependencies:
+## Highlights
+
+- Bilingual English/Chinese UI with a Chinese-first default.
+- Market tabs for A-shares, US equities, Hong Kong equities, crypto, and general tools.
+- Category and access filters for market data, filings, macro, papers, factors, backtesting, vendors, and more.
+- Full-text search across names, Chinese names, descriptions, tags, aliases, notes, categories, markets, and access hints.
+- Quick Workflows for common research paths, with open-all, filter, expand, and save actions.
+- Command Palette via `Cmd+K` / `Ctrl+K` for site and workflow search from anywhere in the app.
+- Favorites, Favorite Sites, Pin Board, workflow favorites, and custom web shortcuts.
+- Optional Supabase account sync for favorites, with local guest mode when Supabase is not configured.
+- Static web deployment plus Electron packaging for Windows desktop builds.
+
+## Research Coverage
+
+Quant Navigator organizes curated website resources across verified markets and
+categories from `src/data/markets.ts` and `src/data/sites.ts`.
+
+| Coverage | Examples |
+| --- | --- |
+| Markets | A-shares, US stocks, Hong Kong, crypto, general tools |
+| Data and filings | Market data, data vendors, exchange/regulatory filings |
+| Research | Academic papers, factor research, macro/news resources |
+| Tools | Backtesting platforms, visualization tools, AI/ML-for-finance resources |
+| Access context | Mainland CN, global, proxy-likely, login, paid, institutional, free |
+
+## Product Workflow
+
+```text
+Choose market
+  -> filter research category or access condition
+  -> search resources
+  -> launch a Quick Workflow or Command Palette result
+  -> save favorites, pins, workflows, or custom shortcuts
+```
+
+## Tech Stack
+
+| Area | Technologies |
+| --- | --- |
+| Frontend | React, TypeScript, Vite |
+| Styling | Tailwind CSS, PostCSS |
+| Desktop | Electron, electron-builder |
+| Optional sync | Supabase Auth and `user_favorites` table |
+| Build/release | npm scripts, GitHub Pages workflow, Windows build workflow |
+
+## Key Features
+
+### Search and Filtering
+
+Users can narrow the resource library by market, category, access tag, favorites
+status, workflow selection, or free-text query. Search includes English and
+Chinese names, descriptions, tags, aliases, notes, categories, markets, and
+access labels.
+
+### Quick Workflows
+
+Workflow cards group sites into common research paths such as A-share daily
+monitoring, filings research, US market intelligence, macro research, factor
+research, backtesting tools, academic-paper scanning, fund/private-fund
+research, and crypto market intelligence.
+
+### Command Palette
+
+The Command Palette searches sites and workflows in one modal. Site results open
+external URLs; workflow results can filter the main resource list or open the
+workflow's sites intentionally.
+
+### Favorites and Pin Board
+
+Favorites create a longer-term resource library and appear in a compact Favorite
+Sites section. Pins are separate local quick-launch entries for the home page's
+Pin Board.
+
+### Custom Shortcuts
+
+Users can add, edit, delete, export, and import their own web shortcuts. Custom
+shortcuts participate in search, filters, favorites, pins, the Command Palette,
+and result counts alongside built-in resources.
+
+### Optional Sync
+
+Without Supabase, favorites, pins, workflow favorites, custom shortcuts, and
+preferences are stored in the current browser or Electron local storage. When
+Supabase is configured and a user signs in, site favorites can sync through the
+`user_favorites` table; pins, workflow favorites, custom shortcuts, and backup
+files remain local.
+
+## Architecture
+
+Quant Navigator is primarily a frontend application. Static TypeScript data
+defines markets, categories, resources, and workflows. React components combine
+that data with local state and hooks for filtering, search, favorites, pinned
+sites, workflow favorites, custom shortcuts, onboarding, settings, and optional
+Supabase-backed favorite sync.
+
+Electron packages the built web app for desktop use. External resource links
+open in the user's default browser.
+
+## Quick Start
 
 ```bash
 npm install
-```
-
-Start the development server:
-
-```bash
 npm run dev
-```
-
-Build for production:
-
-```bash
 npm run build
 ```
 
-Preview the production build:
+Useful optional commands:
 
 ```bash
 npm run preview
-```
-
-## 部署给 Windows 用户使用
-
-Quant Navigator can be deployed as a static website. After deployment, Windows users do not need Node.js, Git, or command-line setup. They only open the published URL in a browser.
-
-The production build command is:
-
-```bash
-npm run build
-```
-
-The generated `dist/` directory is the static site output for Vercel, Netlify, GitHub Pages, or any static hosting service.
-
-### 方式一：Vercel 部署
-
-1. Push this project to a GitHub repository.
-2. Open Vercel and choose `Import Git Repository`.
-3. Select the repository.
-4. Framework Preset: `Vite`.
-5. Build Command: `npm run build`.
-6. Output Directory: `dist`.
-7. Add Supabase environment variables only if you want account-based favorites:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-8. Click `Deploy`.
-
-After deployment, Windows users can open the generated Vercel URL directly.
-
-### 方式二：Netlify 部署
-
-1. Open Netlify and choose `New site from Git`.
-2. Select the GitHub repository.
-3. Build command: `npm run build`.
-4. Publish directory: `dist`.
-5. Add Supabase environment variables only if needed:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-6. Deploy the site.
-
-Windows users can then access the generated Netlify URL in their browser.
-
-### 方式三：GitHub Pages 部署
-
-This repository includes `.github/workflows/deploy.yml`.
-
-When code is pushed to the `main` branch, GitHub Actions will:
-
-1. Use Node.js 22.
-2. Run `npm ci`.
-3. Run `npm run build`.
-4. Upload the `dist/` directory.
-5. Deploy it with `actions/deploy-pages`.
-
-In the GitHub repository settings, enable GitHub Pages with `GitHub Actions` as the source. If you want Supabase account sync on GitHub Pages, add repository secrets:
-
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-
-If these secrets are not configured, the app still works in local favorites mode.
-
-### 方式四：本地源码运行
-
-Windows users who want to run the source code locally can:
-
-1. Install Node.js LTS.
-2. Download the project ZIP or run `git clone`.
-3. Open PowerShell in the project folder.
-4. Run:
-
-```powershell
-npm install
-npm run dev
-```
-
-5. Open this URL in a browser:
-
-```text
-http://localhost:5173/
-```
-
-## Windows 离线版
-
-Quant Navigator also supports an Electron desktop build for Windows. This keeps the Web version unchanged, but allows Windows users to download an `.exe` and open the app without Vercel, proxy tools, Node.js, or command-line setup.
-
-### 普通用户
-
-1. Download the Quant Navigator Windows package from GitHub Actions artifacts or a GitHub Release.
-2. Installer version: double-click the `.exe` and follow the installer.
-3. Portable version: double-click the `.exe` to run directly.
-4. Node.js is not required.
-5. Command-line usage is not required.
-6. Vercel access is not required.
-7. The app can start offline because the UI is bundled into the desktop app.
-8. Clicking website links opens the system default browser, not an internal Electron browser window.
-
-### 开发者
-
-Run Electron in development mode:
-
-```bash
 npm run electron:dev
-```
-
-Build Windows installer and portable packages:
-
-```bash
 npm run electron:build:win
 ```
 
-Build only the portable target:
+## Deployment
 
-```bash
-npm run electron:build:win-portable
-```
+The app builds to static files in `dist/`, so it can be deployed on Vercel,
+GitHub Pages, Netlify, or another static host. The repository also includes:
 
-Recommended path: use GitHub Actions on `windows-latest` to build Windows packages. Cross-building Windows packages locally from macOS can be unstable because Electron Builder may need Windows-specific tooling and signing behavior.
+- `.github/workflows/deploy.yml` for GitHub Pages.
+- `.github/workflows/windows-release.yml` for Windows Electron artifacts.
+- Electron Builder targets for NSIS installer and portable Windows executables.
 
-### GitHub Actions 下载 Windows 包
+Detailed deployment and regional hosting notes live in the docs rather than the
+root README.
 
-This repository includes `.github/workflows/windows-release.yml`.
+## Delivery Channels
 
-To download the package:
+| Channel | Status |
+| --- | --- |
+| Vercel demo | Public demo is configured in the GitHub repository homepage metadata. |
+| Static hosting | `npm run build` outputs a Vite static bundle in `dist/`. |
+| GitHub Pages | Automated workflow is included for the `main` branch. |
+| Windows desktop | Electron Builder configuration supports NSIS and portable `.exe` targets. |
 
-1. Push to `main`, or manually run the `Build Windows Desktop App` workflow from GitHub Actions.
-2. Open the completed workflow run.
-3. Download the artifact named `quant-navigator-windows`.
-4. Extract the artifact zip.
-5. Run the `.exe`.
+## Privacy and Data
 
-### Windows 桌面版收藏说明
-
-If Supabase is not configured, favorites are stored in Electron local storage on the current machine. Different computers do not sync favorites automatically. To sync favorites across machines, configure Supabase and sign in with the same account.
-
-## 版本发布
-
-The current app version is defined in `package.json`:
-
-```json
-"version": "0.1.0"
-```
-
-Quant Navigator has two delivery channels:
-
-- Web version: deploy automatically through Vercel, GitHub Pages, Netlify, or another static hosting platform after `npm run build`.
-- Windows offline version: build with GitHub Actions and download the generated artifact.
-
-Recommended release flow:
-
-1. Confirm `package.json` has the intended `version`.
-2. Let Vercel / GitHub Pages deploy the Web version.
-3. Use the Windows GitHub Actions workflow to build the desktop package.
-4. Download the Windows artifact and test both generated executables.
-5. Create a GitHub Release, such as `v0.1.0`.
-6. Upload the Windows `.exe` files to the Release so users can download stable assets instead of temporary Actions artifacts.
-
-Windows package guidance:
-
-- Portable version: best for no-install trials, demos, and quick sharing. Users can run it directly.
-- Setup version: best for long-term use because it installs shortcuts and behaves like a normal Windows desktop app.
-
-More release details:
-
-- [Release Checklist](docs/release-checklist.md)
-- [User Guide](docs/user-guide.md)
-
-## 中国大陆用户访问方案
-
-Vercel 适合海外用户和快速发布，但在中国大陆访问可能需要代理或出现不稳定。国内用户建议使用腾讯云 EdgeOne Pages、腾讯云 COS 静态网站或阿里云 OSS 静态网站部署 `dist/`。
-
-- 海外用户：优先使用 Vercel。
-- 中国大陆用户：建议使用腾讯云或阿里云静态托管。
-- 离线 Windows 用户：可以使用本地静态包，后续也可以封装 Electron 桌面版。
-
-未配置 Supabase 时，收藏仍保存在用户自己的浏览器 `localStorage` 中。国内部署和海外部署的数据互不影响；只有当多个部署配置同一个 Supabase 项目时，登录账号收藏才会同步到同一份远程数据。
-
-更多国内部署细节见：
-
-- [中国大陆可访问部署方案](docs/deploy-china.md)
-- [Deployment Checklist](docs/deployment-checklist.md)
-
-## Features
-
-- Two-level filtering: market first, then function category.
-- Bilingual UI: English and 中文.
-- Search across English names, Chinese names, descriptions, categories, tags, and notes.
-- Command Palette opens with `Cmd+K` / `Ctrl+K` to search sites and workflows from anywhere in the app.
-- Access Tags show manual access hints such as Mainland CN, Global, Proxy likely, Login, Paid, Institutional, and Free.
-- First Run Onboarding introduces markets, Quick Workflows, Pin Board, Command Palette, and backup/restore.
-- Settings / Help explains the app, shortcuts, local storage, and lets users clear local favorites, pins, and workflow favorites.
-- Custom Shortcuts let users add, edit, delete, import, and export their own web shortcuts without changing code.
-- Custom Shortcuts join built-in sites in search, filters, Pin Board, favorites, Command Palette, and result counts.
-- Guest favorites persist in `localStorage`.
-- Optional Supabase Auth + database sync gives each signed-in user a private favorites list.
-- Favorite Sites shows favorited websites in a compact home section for long-term tracked resources.
-- Pin Board gives the home page a compact quick-launch area for the user's most-used websites.
-- Pin Board pins persist locally with browser or Electron `localStorage` and are separate from favorites.
-- Priority labels: `core`, `useful`, and `optional`.
-- Quick Workflows group research paths by scenario, show bilingual names, market, website count, priority, and tags.
-- Workflow cards can expand their website list, open all included websites, filter the main resource list to those websites, and save workflow favorites.
-- Workflow favorites persist locally with browser or Electron `localStorage`.
-- The app remains front-end only. Supabase is optional and configured through environment variables.
-- No local folder opening, local project opening, local command execution, or backend service is included.
-
-## First Run Onboarding
-
-New users see a five-step onboarding modal the first time they open Quant Navigator:
-
-- Choose a market: A-Shares, US Stocks, Hong Kong, Crypto, or Tools.
-- Use Quick Workflows to launch common research flows.
-- Pin frequent sites to the Pin Board.
-- Press `Cmd/Ctrl + K` for the Command Palette.
-- Use Settings / Help to export backups and restore settings.
-
-The onboarding can be skipped or completed with `开始使用` / `Get Started`. After that, it is hidden with this localStorage key:
-
-```text
-quant_navigator_onboarding_seen
-```
-
-Users can replay it from `设置 / 帮助` / `Settings / Help` with `重新查看新手引导` / `Replay Onboarding`.
+Quant Navigator is frontend-first. In guest mode, settings and saved resources
+stay in the current browser or Electron local storage. If Supabase environment
+variables are configured and the user signs in, site favorites can be stored
+remotely per user. The app does not probe website availability in real time and
+does not run local shell commands.
 
 ## Project Structure
 
 ```text
 src/
-  main.tsx
-  App.tsx
-  data/
-    markets.ts
-    sites.ts
-    workflows.ts
-  hooks/
-    useAuth.ts
-    useCustomShortcuts.ts
-    useFavorites.ts
-    usePinnedSites.ts
-    useWorkflowFavorites.ts
-  lib/
-    supabaseClient.ts
-  components/
-    AuthBar.tsx
-    AccessFilter.tsx
-    CategoryFilter.tsx
-    CommandPalette.tsx
-    MarketTabs.tsx
-    Navbar.tsx
-    PinBoard.tsx
-    QuickWorkflows.tsx
-    SearchBar.tsx
-    SettingsHelpModal.tsx
-    ShortcutEditorModal.tsx
-    SiteCard.tsx
-  utils/
-    storage.ts
+  data/          Markets, categories, sites, and workflows
+  components/    Filters, cards, workflows, command palette, settings, onboarding
+  hooks/         Auth, favorites, pins, workflow favorites, custom shortcuts
+  lib/           Supabase client
+  utils/         Local storage, backup, and import/export helpers
+electron/        Desktop main and preload scripts
+docs/            User, deployment, China hosting, and release documentation
 ```
 
-## Favorites Modes
-
-### Local Guest Favorites
-
-If Supabase is not configured, or the user is not signed in, favorites are saved locally in the browser with this key:
-
-```text
-quant_navigator_guest_favorites
-```
-
-Workflow favorites are also local-only and saved with this key:
-
-```text
-quant_navigator_workflow_favorites
-```
-
-Pin Board entries are a separate local quick-launch list and are saved with this key:
-
-```text
-quant_navigator_pinned_sites
-```
-
-The app will continue to work without Supabase. In this mode the UI shows that it is using local favorites.
-
-Because local favorites use browser `localStorage`, favorites do not sync across different computers, browsers, or operating-system users. This also means different Windows users on different browsers will not affect each other.
-
-### Favorite Sites Section
-
-Favorited websites appear in the `收藏网站` / `Favorite Sites` section near the top of the home page. This section uses compact cards so favorites are easy to scan without duplicating the full resource list.
-
-Click the top `收藏 X` / `Favorites X` status pill to jump directly to the Favorite Sites section. The page scrolls to the section and briefly highlights it, even when there are no favorites yet, so users can see the empty state and learn where favorites will appear.
-
-Each favorite card shows the site name, market, category, priority, optional access hints, an `Open` / `打开` action, and an `Unfavorite` / `取消收藏` action. The section shows up to 8 favorite cards; if there are more, use `只看收藏` / `Favorites only` to view the full favorite collection in the main site list.
-
-`只看收藏` / `Favorites only` reuses the existing favorite state and stacks with every other filter:
-
-- Market, Category, and Access filters.
-- Search.
-- Workflow filters.
-
-Favorites remain separate from Pin Board pins: favorites are a long-term resource library, while pins are the fastest home-page launch entries. In local guest mode favorites are stored in `localStorage`; when Supabase favorites sync is configured and the user is signed in, favorites continue to follow the existing remote sync behavior.
-
-### Pin Board vs Favorites
-
-- Favorites are for long-term resources the user wants to track or review later.
-- Pins are for the home page's fastest launch area.
-- A website can be both favorited and pinned, but the two states are stored and managed independently.
-- Pins are local-only in both Web and Electron builds and do not require Supabase.
-
-## Custom Shortcuts
-
-Custom Shortcuts are user-created website entries. They are for web URLs only, keeping Quant Navigator a quick-launch assistant rather than a local project manager.
-
-To add one, click `添加快捷入口` / `Add Shortcut` near the top of the home page, fill in at least a Chinese or English name, an `http://` or `https://` URL, market, and category, then save. The default market is `通用工具` / Tools, the default category is `Tools / Visualization / 工具可视化`, and the default priority is `useful`.
-
-After saving, the shortcut appears immediately with built-in sites and participates in:
-
-- Main search.
-- Market, Category, and Access filters.
-- Pin Board.
-- Favorites.
-- Command Palette.
-- Site result counts.
-
-To edit or delete a custom shortcut, use the `编辑` / `Edit` or `删除` / `Delete` buttons on that custom site card. Built-in site cards do not show delete controls. Deleting a custom shortcut also removes its local pin and local/remote favorite state for that shortcut id.
-
-To back up or move custom shortcuts, open `设置 / 帮助` / `Settings / Help`:
-
-- `导出自定义快捷入口` / `Export Custom Shortcuts` downloads a JSON file.
-- `导入自定义快捷入口` / `Import Custom Shortcuts` reads a JSON file, validates fields, regenerates duplicate ids, and skips duplicate URLs by default unless the user chooses to keep them.
-
-Custom shortcuts are stored in current browser or Electron `localStorage` with this key:
-
-```text
-quant_navigator_custom_shortcuts
-```
-
-They are not uploaded to Supabase or any server. They do not automatically sync across browsers, computers, or operating-system users. To move them, export JSON from one environment and import it in another.
-
-## Backup & Migration
-
-Use `设置 / 帮助` / `Settings / Help` for a full local settings backup:
-
-- `导出全部设置` / `Export All Settings` downloads one JSON file for the current browser or Electron app.
-- `导入全部设置` / `Import All Settings` restores that JSON into the current browser or Electron app.
-
-The full backup includes:
-
-- Favorite site ids.
-- Pin Board site ids.
-- Favorite workflow ids.
-- Custom Shortcuts.
-- Preferences such as language.
-- Metadata fields such as `app`, `version`, and `exportedAt`.
-
-The JSON shape is:
-
-```json
-{
-  "app": "Quant Navigator",
-  "version": "0.1.0",
-  "exportedAt": "2026-06-02T00:00:00.000Z",
-  "favorites": [],
-  "pinnedSites": [],
-  "favoriteWorkflows": [],
-  "customShortcuts": [],
-  "preferences": {}
-}
-```
-
-Import validates the `app` field and required array structure before applying changes. It asks for confirmation because it overwrites current local favorites, pins, workflow favorites, custom shortcuts, and preferences. Built-in sites are never changed by import.
-
-Backups are local JSON files only. Quant Navigator does not upload backup data, contact a backend, open local folders, or run local commands. To migrate to a new browser, computer, or Windows offline build, export JSON in the old environment and import it in the new one.
-
-## Command Palette
-
-Press `Cmd+K` on macOS or `Ctrl+K` on Windows/Linux to open the Command Palette.
-
-- Search websites and workflows in one place.
-- Access tags are searchable, so queries such as `国内可用`, `proxy`, or `paid` can find matching websites.
-- Press `Enter` on a site result to open that website.
-- Press `Enter` on a workflow result to filter the main website list to that workflow's sites.
-- Workflow results include an explicit `Open all` / `打开全部` button for intentionally opening every website in the workflow.
-- Aliases make short commands work, such as `dfcf` for 东方财富, `cninfo` for 巨潮资讯, `tv` for TradingView, and `fred` for FRED.
-- The palette is front-end only and does not open local folders, local projects, or run shell commands.
-
-## Access Tags
-
-Each site may include manual access hints:
-
-- `国内可用` / `Mainland CN`
-- `海外可用` / `Global`
-- `可能需要代理` / `Proxy likely`
-- `需要登录` / `Login`
-- `付费终端` / `Paid`
-- `机构权限` / `Institutional`
-- `免费可用` / `Free`
-
-These tags are manually curated notes, not real-time network checks. Quant Navigator does not automatically ping websites, probe availability, or test login/paywall state. This avoids CORS issues, regional network false positives, and misleading results from temporary connectivity differences.
-
-## Settings / Help
-
-Use the `设置 / 帮助` / `Settings / Help` button in the top navigation to open the help and settings modal.
-
-The Help section covers:
-
-- What Quant Navigator is.
-- How search, Market, Category, and Access filters work.
-- How to use Quick Workflows, Pin Board, Favorites, and Command Palette.
-- Windows offline desktop build notes.
-- localStorage behavior.
-
-The Settings section can clear:
-
-- Local favorites: `quant_navigator_guest_favorites`
-- Pin Board entries: `quant_navigator_pinned_sites`
-- Workflow favorites: `quant_navigator_workflow_favorites`
-- Custom shortcuts: `quant_navigator_custom_shortcuts`
-- Language preference: `quant_navigator_language`
-- Onboarding seen flag: `quant_navigator_onboarding_seen`
-
-The Settings section can also replay onboarding, export/import custom shortcuts alone, or export/import all local settings as JSON. Import validation never changes built-in sites.
-
-`Reset all local settings` / `重置全部本地设置` clears all local keys after a confirmation prompt. It only affects the current browser or Electron app localStorage. It does not open folders, manage local projects, or execute local commands.
-
-### Multi-User Favorites
-
-When Supabase is configured and a user signs in with email magic link, favorites are loaded from the `user_favorites` table. Each row is scoped by `user_id`, and Supabase Row Level Security ensures users can only view, insert, and delete their own favorites.
-
-Signed-in users can click `导入本机收藏到账号` / `Import local favorites` to copy guest favorites into the current account. Duplicate `site_id` values are ignored by the database constraint.
-
-## Supabase Setup
-
-Install the Supabase client:
-
-```bash
-npm install @supabase/supabase-js
-```
-
-Create a `.env` file from `.env.example`:
-
-```bash
-cp .env.example .env
-```
-
-Set these values:
-
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-Restart `npm run dev` after changing `.env`.
-
-Do not commit `.env`. Commit `.env.example` only. On Vercel, Netlify, or GitHub Pages, configure these values in the platform's Environment Variables or repository secrets:
-
-```text
-VITE_SUPABASE_URL
-VITE_SUPABASE_ANON_KEY
-```
-
-If these variables are missing, the deployed app will not crash. It will automatically show local favorites mode and hide the unavailable login form.
-
-### Supabase SQL
-
-Run this SQL in the Supabase SQL editor:
-
-```sql
-create table if not exists user_favorites (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  site_id text not null,
-  created_at timestamptz default now(),
-  unique(user_id, site_id)
-);
-
-alter table user_favorites enable row level security;
-
-create policy "Users can view their own favorites"
-on user_favorites for select
-using (auth.uid() = user_id);
-
-create policy "Users can insert their own favorites"
-on user_favorites for insert
-with check (auth.uid() = user_id);
-
-create policy "Users can delete their own favorites"
-on user_favorites for delete
-using (auth.uid() = user_id);
-```
-
-### Auth Settings
-
-In Supabase Auth, enable email magic link sign-in. Add your local development URL, usually `http://localhost:5173` or `http://127.0.0.1:5173`, to the allowed redirect URLs if needed.
-
-## Testing Favorites
-
-1. Start with no `.env` file and run `npm run dev`.
-2. Favorite a few sites while signed out. Confirm the app shows local favorites mode and the favorite count changes.
-3. Configure Supabase, restart the dev server, and send a magic link to user A.
-4. After signing in as user A, favorite and unfavorite sites. Confirm rows appear in `user_favorites` with user A's `user_id`.
-5. Click `导入本机收藏到账号` / `Import local favorites` and confirm guest favorites are copied into user A's account.
-6. Sign out. Confirm user A's remote favorites disappear and the app returns to guest local favorites.
-7. Sign in as user B. Confirm user B does not see user A's favorites.
-8. Favorite different sites as user B and confirm both users' rows remain isolated by `user_id`.
-
-## Add a New Website
-
-Open `src/data/sites.ts` and add a `Site` object:
-
-```ts
-{
-  id: 'example-data-tool',
-  name: 'Example Data Tool',
-  nameZh: '示例数据工具',
-  url: 'https://example.com',
-  description: 'Short English description.',
-  descriptionZh: '简短中文说明。',
-  market: 'A股',
-  category: 'Market Data / 行情数据',
-  tags: ['行情', '数据', 'api'],
-  aliases: ['example', 'data'],
-  access: ['国内可用', '免费可用'],
-  priority: 'useful',
-  noteZh: '说明它在投研工作流里的具体用途。'
-}
-```
-
-Keep `id` unique. Use stable lowercase IDs because workflows refer to sites by `id`. Add `aliases` for common abbreviations, pinyin, ticker-style shorthand, or vendor nicknames that users may type into the Command Palette.
-
-## Add an A-Share Website
-
-For A-share resources, set:
-
-- `market: 'A股'`
-- `descriptionZh` with a clear Chinese explanation
-- `noteZh` with the practical use case
-- `priority: 'core'` for daily high-frequency or authoritative sources
-
-Good categories for A-share additions include `Market Data / 行情数据`, `Filings / 公告披露`, `Regulatory / 监管交易所`, `Backtesting / 回测平台`, and `Data Vendor / 数据供应商`.
-
-## Add a Market
-
-Markets are defined in `src/data/markets.ts`.
-
-1. Add the new market to the `Market` type.
-2. Add it to the `markets` array.
-3. Add display labels in `marketLabels`.
-4. Use the new market value in `src/data/sites.ts`.
-
-## Add a Category
-
-Categories are also defined in `src/data/markets.ts`.
-
-1. Add the new category to the `Category` type.
-2. Add it to the `categories` array.
-3. Add English and Chinese labels in `categoryLabels`.
-
-## Add a Workflow
-
-Open `src/data/workflows.ts` and add a workflow:
-
-```ts
-{
-  id: 'a-share-example-workflow',
-  title: 'A-Share Example Workflow',
-  titleZh: 'A股示例工作流',
-  group: 'A股每日',
-  market: 'A股',
-  priority: 'useful',
-  tags: ['行情', '数据', 'daily'],
-  aliases: ['daily', 'watch'],
-  description: 'Open a useful set of research websites.',
-  descriptionZh: '打开一组常用投研网站。',
-  siteIds: ['eastmoney', 'cninfo', 'joinquant']
-}
-```
-
-Each `siteIds` value must match an existing `id` in `src/data/sites.ts`. Use one of the existing workflow groups in `src/data/workflows.ts` so the card appears under the right scenario.
-
-## Language Switching
-
-Use the top-right language toggle:
-
-- `中文` switches to the China private-fund research terminal style.
-- `English` switches labels, copy, and actions back to English.
-
-The app currently defaults to Chinese.
-
-## Future Extensions
-
-- Add more curated web workflows for specific research routines.
-- Improve workflow search and tag filtering.
-- Add exportable web resource collections.
-- Add more bilingual notes for how each website supports quant research.
+## Documentation
+
+- [User Guide](docs/user-guide.md) - product usage, workflows, shortcuts, and settings.
+- [Deployment Checklist](docs/deployment-checklist.md) - static deployment checks.
+- [China Deployment Guide](docs/deploy-china.md) - mainland-accessible hosting notes.
+- [Release Checklist](docs/release-checklist.md) - web and Windows release flow.
+
+## Limitations
+
+- Resource access tags are manually curated hints, not live network or paywall checks.
+- The app launches websites; it does not ingest market data or backtest strategies.
+- Guest-mode data is local to the current browser, computer, or Electron profile.
+- Supabase sync covers site favorites only in the current implementation.
+- Windows desktop packages are built through Electron and GitHub Actions; no macOS/Linux desktop packaging is documented here.
+- The repository does not currently include a license file.
